@@ -1,0 +1,14 @@
+name: KitPvP
+version: ${project.version}
+main: me.flame.galantic.Core
+prefix: KitPvP
+authors: [LetsFlame_]
+description: KitPvP Plugin made for Galantic.
+website: galanticmc.net
+commands:
+  stats:
+    description: []
+  setspawn:
+    description: []
+  spawn:
+    description: []
