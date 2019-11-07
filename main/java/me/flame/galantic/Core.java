@@ -55,7 +55,6 @@ public final class Core extends JavaPlugin implements Listener {
     public void onDisable() {
         instance = null;
         for (Player online : Bukkit.getServer().getOnlinePlayers()) {
-            online.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
             SQLUserManager.getInstance().saveUser(online.getUniqueId());
         }
 
@@ -84,7 +83,7 @@ public final class Core extends JavaPlugin implements Listener {
         hikari = new HikariDataSource();
         hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
 
-        hikari.addDataSourceProperty("serverName", "51.83.44.94");
+        hikari.addDataSourceProperty("serverName", "151.80.201.167");
         hikari.addDataSourceProperty("port", "3306");
         hikari.addDataSourceProperty("databaseName", "devac_KitPvP");
         hikari.addDataSourceProperty("user", "devac");

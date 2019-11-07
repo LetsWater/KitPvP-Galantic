@@ -27,30 +27,19 @@ public class GiveKitCustom {
                 .addEnchantment(1, Enchantment.DAMAGE_ALL)
                 .setUnbreakable().setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
 
-        ItemStack bow = new ItemStack(new ItemBuilder(Material.BOW, 1)
-                .addEnchantment(1, Enchantment.ARROW_DAMAGE, Enchantment.ARROW_FIRE)
-                .setUnbreakable()
-                .setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
-
-        ItemStack slimeball = new ItemStack(new ItemBuilder(Material.SLIME_BALL, 1).addEnchantment(1, Enchantment.KNOCKBACK).setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
-
-        ItemStack arrow = new ItemStack(Material.ARROW, 64);
-        ItemStack leatherHelmet = new ItemStack(new ItemBuilder(Material.LEATHER_HELMET, 1).addEnchantment(2, Enchantment.PROTECTION_ENVIRONMENTAL)
+        ItemStack leatherHelmet = new ItemStack(new ItemBuilder(Material.LEATHER_HELMET, 1).addEnchantment(3, Enchantment.PROTECTION_ENVIRONMENTAL)
                 .setUnbreakable().setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
 
-        ItemStack leatherChestplate = new ItemStack(new ItemBuilder(Material.LEATHER_CHESTPLATE, 1).addEnchantment(2, Enchantment.PROTECTION_ENVIRONMENTAL)
+        ItemStack leatherChestplate = new ItemStack(new ItemBuilder(Material.LEATHER_CHESTPLATE, 1).addEnchantment(3, Enchantment.PROTECTION_ENVIRONMENTAL)
                 .setUnbreakable().setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
 
-        ItemStack leatherLeggings = new ItemStack(new ItemBuilder(Material.LEATHER_LEGGINGS, 1).addEnchantment(2, Enchantment.PROTECTION_ENVIRONMENTAL)
+        ItemStack leatherLeggings = new ItemStack(new ItemBuilder(Material.LEATHER_LEGGINGS, 1).addEnchantment(3, Enchantment.PROTECTION_ENVIRONMENTAL)
                 .setUnbreakable().setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
 
-        ItemStack leaterBoots = new ItemStack(new ItemBuilder(Material.LEATHER_BOOTS, 1).addEnchantment(2, Enchantment.PROTECTION_ENVIRONMENTAL)
+        ItemStack leaterBoots = new ItemStack(new ItemBuilder(Material.LEATHER_BOOTS, 1).addEnchantment(3, Enchantment.PROTECTION_ENVIRONMENTAL)
                 .setUnbreakable().setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
 
         p.getInventory().setItem(0, stoneSword);
-        p.getInventory().setItem(1, bow);
-        p.getInventory().setItem(2, slimeball);
-        p.getInventory().setItem(9, arrow);
         p.getInventory().setHelmet(leatherHelmet);
         p.getInventory().setChestplate(leatherChestplate);
         p.getInventory().setLeggings(leatherLeggings);

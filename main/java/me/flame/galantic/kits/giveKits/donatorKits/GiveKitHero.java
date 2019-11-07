@@ -21,7 +21,7 @@ public class GiveKitHero {
         PotionEffect potionEffect = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 999999, 0);
         p.addPotionEffect(potionEffect);
 
-        ItemStack dSword = new ItemStack(new ItemBuilder(Material.DIAMOND_SWORD, 1).addEnchantment(1, Enchantment.FIRE_ASPECT)
+        ItemStack dSword = new ItemStack(new ItemBuilder(Material.IRON_SWORD, 1).addEnchantment(1, Enchantment.FIRE_ASPECT)
                 .setUnbreakable().setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
 
         ItemStack ironHelmet = new ItemStack(new ItemBuilder(Material.IRON_HELMET, 1).addEnchantment(1, Enchantment.PROTECTION_ENVIRONMENTAL)

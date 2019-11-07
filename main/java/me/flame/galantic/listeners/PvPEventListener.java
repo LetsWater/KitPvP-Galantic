@@ -9,21 +9,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -59,6 +56,11 @@ public class PvPEventListener implements Listener {
                 } else {
                     killstreak.put(user.getUuid(), 1);
                 }
+
+                if(user.getBestStreak() < killstreak.get(user.getUuid())){
+                    user.setBestStreak(killstreak.get(user.getUuid()));
+                }
+
 
 
                 killer.sendMessage("Gewonnen van " + p.getName());
@@ -109,7 +111,7 @@ public class PvPEventListener implements Listener {
         Player p = (Player) e.getEntity();
         if(p.getInventory().getHelmet() == null) return;
 
-        p.setVelocity(e.getDamager().getLocation().getDirection().setY(0).normalize().multiply(0.3));
+        p.setVelocity(e.getDamager().getLocation().getDirection().setY(-0.65).normalize().multiply(0.2));
     }
 
     @EventHandler
@@ -126,13 +128,13 @@ public class PvPEventListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 p.setHealth(p.getHealth() + 8 > p.getMaxHealth() ? p.getMaxHealth() : p.getHealth() + 8);
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new BukkitRunnable() {
-                    @Override
-                    public void run() {
+                //Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new BukkitRunnable() {
+                //    @Override
+                 //   public void run() {
                         p.setItemInHand(new ItemStack(Material.AIR));
                         p.updateInventory();
-                    }
-                }, 1);
+                //    }
+                //}, 1);
             }
         }
 
@@ -141,5 +143,13 @@ public class PvPEventListener implements Listener {
     @EventHandler
     public void dropEvent(PlayerDropItemEvent e){
         e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onArrowHit(ProjectileHitEvent event){
+        if(event.getEntity() instanceof Arrow){
+            Arrow arrow = (Arrow) event.getEntity();
+            arrow.remove();
+        }
     }
 }

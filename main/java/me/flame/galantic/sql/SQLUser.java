@@ -51,6 +51,10 @@ public class SQLUser {
         return bestStreak;
     }
 
+    public void setBestStreak(Integer bstreak){
+        this.bestStreak = bstreak;
+    }
+
     public Integer getLevel() {
         return level;
     }

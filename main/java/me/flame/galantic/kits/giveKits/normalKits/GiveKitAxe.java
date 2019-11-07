@@ -3,7 +3,6 @@ package me.flame.galantic.kits.giveKits.normalKits;
 import me.flame.galantic.commands.gui.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +20,6 @@ public class GiveKitAxe {
         p.addPotionEffect(potionEffect);
 
         ItemStack dSword = new ItemStack(new ItemBuilder(Material.IRON_AXE, 1)
-                .addEnchantment(1, Enchantment.DAMAGE_ALL)
                 .setUnbreakable().setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
 
         ItemStack ironHelmet = new ItemStack(new ItemBuilder(Material.IRON_HELMET, 1).setUnbreakable().setItemFlag(ItemFlag.HIDE_UNBREAKABLE).build());
