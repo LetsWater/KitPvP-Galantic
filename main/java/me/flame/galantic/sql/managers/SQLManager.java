@@ -12,7 +12,7 @@ public class SQLManager {
         try{
             Connection connection = Core.getInstance().hikari.getConnection();
             Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS `user_data` (`uuid` varchar(36) NOT NULL, `name` varchar(36) NOT NULL,`using_kit` varchar(36) NOT NULL ,`pvp_coins` INT NOT NULL, `kills` INT NOT NULL, `deaths` INT NOT NULL, `best_streak` INT NOT NULL, PRIMARY KEY (`uuid`))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS `user_data` (`uuid` varchar(36) NOT NULL, `name` varchar(36) NOT NULL,`using_kit` varchar(36) NOT NULL ,`pvp_coins` DOUBLE NOT NULL, `kills` INT NOT NULL, `deaths` INT NOT NULL, `best_streak` INT NOT NULL, PRIMARY KEY (`uuid`))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS `levels` (`level` int, `xp` int, PRIMARY KEY (`level`))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS `user_levels` (`uuid` varchar(36), `name` varchar(36), `level` int, `xp` int, PRIMARY KEY (`uuid`))");
 

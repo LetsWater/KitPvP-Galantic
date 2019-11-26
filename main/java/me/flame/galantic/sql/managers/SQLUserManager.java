@@ -54,7 +54,7 @@ public class SQLUserManager implements ISQLUser {
                 SQLUser user;
                 String name = p.getName();
                 String using_kit = resultData.getString("using_kit");
-                Integer pvpCoins = resultData.getInt("pvp_coins");
+                double pvpCoins = resultData.getDouble("pvp_coins");
                 Integer kills = resultData.getInt("kills");
                 Integer deaths = resultData.getInt("deaths");
                 Integer bestStreak = resultData.getInt("best_streak");

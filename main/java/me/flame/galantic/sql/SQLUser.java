@@ -7,14 +7,14 @@ public class SQLUser {
     private String name;
     private UUID uuid;
     private String using_kit;
-    private Integer pvpCoins;
+    private double pvpCoins;
     private Integer kills;
     private Integer deaths;
     private Integer bestStreak;
     private Integer level;
     private Integer xp;
 
-    public SQLUser(String name, UUID uuid, String using_kit, Integer pvpCoins, Integer kills, Integer deaths, Integer bestStreak, Integer level, Integer xp){
+    public SQLUser(String name, UUID uuid, String using_kit, double pvpCoins, Integer kills, Integer deaths, Integer bestStreak, Integer level, Integer xp) {
         this.name = name;
         this.uuid = uuid;
         this.using_kit = using_kit;
@@ -26,8 +26,12 @@ public class SQLUser {
         this.xp = xp;
     }
 
-    public Integer getPvpCoins(){
+    public double getPvpCoins() {
         return pvpCoins;
+    }
+
+    public void setPvpCoins(double coins) {
+        this.pvpCoins = coins;
     }
 
     public String getName() {
@@ -43,7 +47,7 @@ public class SQLUser {
         return deaths;
     }
 
-    public void setDeaths(Integer deaths){
+    public void setDeaths(Integer deaths) {
         this.deaths = deaths;
     }
 
@@ -51,7 +55,7 @@ public class SQLUser {
         return bestStreak;
     }
 
-    public void setBestStreak(Integer bstreak){
+    public void setBestStreak(Integer bstreak) {
         this.bestStreak = bstreak;
     }
 

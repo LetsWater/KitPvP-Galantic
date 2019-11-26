@@ -1,6 +1,7 @@
 package me.flame.galantic.listeners;
 
 import me.flame.galantic.Core;
+import me.flame.galantic.combatlogger.CombatLoggerManager;
 import me.flame.galantic.commands.gui.utils.ItemBuilder;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.managers.SQLUserManager;
@@ -21,13 +22,16 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class PvPEventListener implements Listener {
 
+    private final CombatLoggerManager combatLoggerManager = new CombatLoggerManager();
     public static HashMap<UUID, Integer> killstreak = new HashMap<>();
+    public static HashMap<UUID, UUID> inFight = new HashMap<>();
 
     @EventHandler
     public void PvpEvent(PlayerDeathEvent e) {
@@ -45,11 +49,13 @@ public class PvPEventListener implements Listener {
 
                 p.sendMessage("Verloren van " + killer.getName());
 
+                combatLoggerManager.removeCombat(p);
                 p.spigot().respawn();
             }
 
             if (user.getUuid() == killer.getUniqueId()) {
                 user.setKills(user.getKills() + 1);
+                user.setPvpCoins(user.getPvpCoins() + 0.5);
 
                 if (killstreak.containsKey(user.getUuid())) {
                     killstreak.replace(user.getUuid(), killstreak.get(user.getUuid()) + 1);
@@ -57,10 +63,9 @@ public class PvPEventListener implements Listener {
                     killstreak.put(user.getUuid(), 1);
                 }
 
-                if(user.getBestStreak() < killstreak.get(user.getUuid())){
+                if (user.getBestStreak() < killstreak.get(user.getUuid())) {
                     user.setBestStreak(killstreak.get(user.getUuid()));
                 }
-
 
 
                 killer.sendMessage("Gewonnen van " + p.getName());
@@ -83,8 +88,10 @@ public class PvPEventListener implements Listener {
                 p.getInventory().setItem(0, new ItemBuilder(Material.ARMOR_STAND, 1).setDisplayName("&aKits").build());
                 p.getInventory().setItem(1, new ItemBuilder(Material.NAME_TAG, 1).setDisplayName("&aEvents &c(Coming Soon)").build());
                 p.getInventory().setItem(4, new ItemBuilder(Material.COMPASS, 1).setDisplayName("&a&lServer Selector").build());
-                p.getInventory().setItem(7, new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setDisplayName("&aProfile").setSkullOwner(p.getName()).build());
-                p.getInventory().setItem(8, new ItemBuilder(Material.CHEST, 1).setDisplayName("&aCosmetics").build());
+                p.getInventory().setItem(7, new ItemBuilder(Material.CHEST, 1).setDisplayName("&aCosmetics").build());
+                p.getInventory().setItem(8, new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setDisplayName("&aProfile").setSkullOwner(p.getName()).build());
+
+                p.setFireTicks(0);
             }
         }, 10);
     }
@@ -105,13 +112,34 @@ public class PvPEventListener implements Listener {
     }
 
     @EventHandler
-    public void pvpEventPlayer(EntityDamageByEntityEvent e){
-        if(!(e.getEntityType() == EntityType.PLAYER)) return;
+    public void pvpEventPlayer(EntityDamageByEntityEvent e) {
+        if (!(e.getEntityType() == EntityType.PLAYER)) return;
 
         Player p = (Player) e.getEntity();
-        if(p.getInventory().getHelmet() == null) return;
+        if (p.getInventory().getHelmet() == null) return;
 
-        p.setVelocity(e.getDamager().getLocation().getDirection().setY(-0.65).normalize().multiply(0.2));
+        if (e.getDamager() instanceof Arrow) {
+            Arrow arrow = (Arrow) e.getDamager();
+            if(arrow.getShooter() instanceof Player){
+                Player shooter = (Player) arrow.getShooter();
+                combatLoggerManager.setCombat(20, shooter);
+                combatLoggerManager.setCombat(20, p);
+                inFight.put(shooter.getUniqueId(), p.getUniqueId());
+                inFight.put(p.getUniqueId(), shooter.getUniqueId());
+
+            }
+        }
+
+        Player damager;
+        if (e.getDamager().getType() == EntityType.PLAYER) {
+            damager = (Player) e.getDamager();
+            combatLoggerManager.setCombat(20, damager);
+            combatLoggerManager.setCombat(20, p);
+            inFight.put(damager.getUniqueId(), p.getUniqueId());
+            inFight.put(p.getUniqueId(), damager.getUniqueId());
+        }
+
+        p.setVelocity(e.getDamager().getLocation().getDirection().setY(-0.2).normalize().multiply(-0.2));
     }
 
     @EventHandler
@@ -119,7 +147,7 @@ public class PvPEventListener implements Listener {
         e.setCancelled(true);
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void soupClickEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (e.getItem() == null) return;
@@ -128,28 +156,29 @@ public class PvPEventListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 p.setHealth(p.getHealth() + 8 > p.getMaxHealth() ? p.getMaxHealth() : p.getHealth() + 8);
 
-                //Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new BukkitRunnable() {
-                //    @Override
-                 //   public void run() {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new BukkitRunnable() {
+                    @Override
+                    public void run() {
                         p.setItemInHand(new ItemStack(Material.AIR));
                         p.updateInventory();
-                //    }
-                //}, 1);
+                    }
+                }, 0);
             }
         }
 
     }
 
     @EventHandler
-    public void dropEvent(PlayerDropItemEvent e){
+    public void dropEvent(PlayerDropItemEvent e) {
         e.setCancelled(true);
     }
 
     @EventHandler
-    public void onArrowHit(ProjectileHitEvent event){
-        if(event.getEntity() instanceof Arrow){
+    public void onArrowHit(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof Arrow) {
             Arrow arrow = (Arrow) event.getEntity();
             arrow.remove();
         }
     }
+
 }

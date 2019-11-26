@@ -1,6 +1,8 @@
 package me.flame.galantic;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.flame.galantic.combatlogger.listeners.CombatLogEvent;
+import me.flame.galantic.commands.CombatLogCommand;
 import me.flame.galantic.commands.SetSpawnCommand;
 import me.flame.galantic.commands.SpawnCommand;
 import me.flame.galantic.commands.StatisticsCommand;
@@ -71,12 +73,14 @@ public final class Core extends JavaPlugin implements Listener {
         pm.registerEvents(new JoinEventListener(), this);
         pm.registerEvents(new PvPEventListener(), this);
         pm.registerEvents(new MoveEvent(), this);
+        pm.registerEvents(new CombatLogEvent(), this);
     }
 
     private void registerCommands() {
         getCommand("stats").setExecutor(new StatisticsCommand());
         getCommand("setspawn").setExecutor(new SetSpawnCommand());
         getCommand("spawn").setExecutor(new SpawnCommand());
+        getCommand("combatlog").setExecutor(new CombatLogCommand());
     }
 
     private void connect() {

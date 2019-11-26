@@ -43,7 +43,7 @@ public class ItemBuilder {
 
         if(rank == true){
             lore.add("");
-            lore.add(ChatUtils.format("&cstore.galanticncetwork.eu"));
+            lore.add(ChatUtils.format("&cstore.galanticnetwork.eu"));
         }
 
         meta.setLore(lore);
@@ -65,6 +65,13 @@ public class ItemBuilder {
         meta.setOwner(skullOwner);
 
         itemStack.setItemMeta(meta);
+        return this;
+    }
+
+    public ItemBuilder setSkullOwnerUrl(String url){
+        SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+        
+
         return this;
     }
 

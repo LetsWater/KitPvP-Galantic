@@ -12,3 +12,6 @@ commands:
     description: []
   spawn:
     description: []
+  combatlog:
+    description: []
+    aliases: [ct, combatl, cl, combat, clog]
