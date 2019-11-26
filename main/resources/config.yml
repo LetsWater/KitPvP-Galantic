@@ -3,3 +3,17 @@
 # Data
 spawn:
   locatie: []
+
+#Database settings
+database:
+  host: 127.0.0.1:3306
+  username: root
+  password: 123
+  databasename: KitPvP
+
+#PvP-Settings
+PvP-Settings:
+  xp-per-kill: 2 # The amount of XP a player gets on a kill.
+  coins-per-kill: 1 # The amount of coins a player gets on a kill.
+  coins-per-death: 0 # The amount of coins a player loses on a death.
+  coins-per-combatlog: 5 # The amount of coins a player loses on a combatlog.

@@ -18,15 +18,8 @@ public class UserLevel {
         return level;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
 
     public double getXP() {
         return XP;
-    }
-
-    public void setXP(double XP) {
-        this.XP = XP;
     }
 }

@@ -94,10 +94,16 @@ public final class Core extends JavaPlugin implements Listener {
         hikari = new HikariDataSource();
         hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
 
-        hikari.addDataSourceProperty("serverName", "151.80.201.167");
-        hikari.addDataSourceProperty("port", "3306");
-        hikari.addDataSourceProperty("databaseName", "devac_KitPvP");
-        hikari.addDataSourceProperty("user", "devac");
-        hikari.addDataSourceProperty("password", "qJzNee3q7hLGHEW3");
+        String hostName = FileManager.get("config.yml").getString("database.host");
+        String[] hostNameAndPort = hostName.split(":");
+        String databaseName = FileManager.get("config.yml").getString("database.databasename");
+        String databasePassword = FileManager.get("config.yml").getString("database.password");
+        String databaseUser = FileManager.get("config.yml").getString("database.username");
+
+        hikari.addDataSourceProperty("serverName", hostNameAndPort[0]);
+        hikari.addDataSourceProperty("port", hostNameAndPort[1]);
+        hikari.addDataSourceProperty("databaseName", databaseName);
+        hikari.addDataSourceProperty("user", databaseUser);
+        hikari.addDataSourceProperty("password", databasePassword);
     }
 }
