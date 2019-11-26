@@ -2,6 +2,8 @@ package me.flame.galantic.commands.gui;
 
 import me.flame.galantic.commands.gui.utils.ItemBuilder;
 import me.flame.galantic.sql.SQLUser;
+import me.flame.galantic.sql.levelSystem.UserLevel;
+import me.flame.galantic.sql.levelSystem.managers.UserLevelManager;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
 import org.bukkit.Bukkit;
@@ -15,42 +17,52 @@ import java.util.UUID;
 
 public class StatisticGUI {
 
-    public Inventory StatisticGUI(UUID uuid, Player p){
+    public Inventory StatisticGUI(UUID uuid, Player p) {
         Player target = Bukkit.getPlayer(uuid);
 
-        Inventory StatsGUI = Bukkit.createInventory(null, 9 , ChatUtils.format("&a&lStats &8» &7" + target.getName()));
+        Inventory StatsGUI = Bukkit.createInventory(null, 9, ChatUtils.format("&a&lStats &8» &7" + target.getName()));
 
-        for(SQLUser user : SQLUserManager.userList) {
+        for (SQLUser user : SQLUserManager.userList) {
             if (user.getUuid() == uuid) {
-                StatsGUI.setItem(1, new ItemBuilder(Material.DIAMOND_SWORD, 1)
-                        .setDisplayName("&aKills: &7" + user.getKills()).setItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
+                for (UserLevel playerLevel : UserLevelManager.levelList) {
+                        StatsGUI.setItem(1, new ItemBuilder(Material.DIAMOND_SWORD, 1)
+                                .setDisplayName("&aKills: &7" + user.getKills()).setItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
 
-                StatsGUI.setItem(2, new ItemBuilder(Material.SKULL_ITEM, 1)
-                        .setDisplayName("&aDeaths: &7" + user.getDeaths()).build());
+                        StatsGUI.setItem(2, new ItemBuilder(Material.SKULL_ITEM, 1)
+                                .setDisplayName("&aDeaths: &7" + user.getDeaths()).build());
 
-                StatsGUI.setItem(3, new ItemBuilder(Material.GOLD_SWORD, 1)
-                        .setDisplayName("&aBest Killstreak: &7" + user.getBestStreak()).setItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
+                        StatsGUI.setItem(3, new ItemBuilder(Material.GOLD_SWORD, 1)
+                                .setDisplayName("&aBest Killstreak: &7" + user.getBestStreak()).setItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
 
-                DecimalFormat df = new DecimalFormat("#0.00");
-                double KDR = 0;
-                if(user.getDeaths() == 0){
-                    KDR = (double) user.getKills();
-                } else {
-                    KDR = (double) user.getKills() / (double) user.getDeaths();
+                        DecimalFormat df = new DecimalFormat("#0.00");
+                        double KDR = 0;
+                        if (user.getDeaths() == 0) {
+                            KDR = (double) user.getKills();
+                        } else {
+                            KDR = (double) user.getKills() / (double) user.getDeaths();
+                        }
+
+                        StatsGUI.setItem(5, new ItemBuilder(Material.WATCH, 1)
+                                .setDisplayName("&aKill/Death Ratio: &7" + df.format(KDR)).build());
+
+                        StatsGUI.setItem(6, new ItemBuilder(Material.GOLD_NUGGET, 1)
+                                .setDisplayName("&aCoins: &7" + user.getPvpCoins()).build());
+
+
+                    if (playerLevel.getLevel() == user.getLevel() + 1) {
+                        StatsGUI.setItem(7, new ItemBuilder(Material.SIGN, 1)
+                                .setDisplayName("&aLevel Information")
+                                .setLore(false, " &fHuidig level &8» &7" + user.getLevel() + "/100", " &fXP &8» &7" + user.getXp() + "/" + playerLevel.getXP()).build());
+                    } else {
+                        StatsGUI.setItem(7, new ItemBuilder(Material.SIGN, 1)
+                                .setDisplayName("&aLevel Information")
+                                .setLore(false, " &fHuidig level &8» &7" + user.getLevel(), " &fXP &8» &7" + user.getXp()
+                                        , " &cMax Level").build());
+                    }
                 }
-
-                StatsGUI.setItem(5, new ItemBuilder(Material.WATCH, 1)
-                        .setDisplayName("&aKill/Death Ratio: &7" + df.format(KDR)).build());
-
-                StatsGUI.setItem(6, new ItemBuilder(Material.GOLD_NUGGET, 1)
-                        .setDisplayName("&aCoins: &7" + user.getPvpCoins()).build());
-
-                StatsGUI.setItem(7, new ItemBuilder(Material.SIGN, 1)
-                        .setDisplayName("&aLevel Information")
-                        .setLore(false, " &fLevel &8» &7" + user.getLevel(), " &fXP &8» &7" + user.getXp() + "/0").build());
-
             }
         }
+
 
         StatsGUI.setContents(StatsGUI.getContents());
         p.openInventory(StatsGUI);

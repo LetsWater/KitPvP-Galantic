@@ -10,9 +10,12 @@ import me.flame.galantic.commands.gui.listeners.InventoryListener;
 import me.flame.galantic.listeners.JoinEventListener;
 import me.flame.galantic.listeners.MoveEvent;
 import me.flame.galantic.listeners.PvPEventListener;
+import me.flame.galantic.sql.levelSystem.UserLevel;
+import me.flame.galantic.sql.levelSystem.managers.UserLevelManager;
 import me.flame.galantic.sql.listeners.UserListener;
 import me.flame.galantic.sql.managers.SQLManager;
 import me.flame.galantic.sql.managers.SQLUserManager;
+import me.flame.galantic.utils.ChatUtils;
 import me.flame.galantic.utils.FileManager;
 import me.flame.galantic.utils.ScoreboardUtils;
 import org.bukkit.Bukkit;
@@ -26,6 +29,7 @@ public final class Core extends JavaPlugin implements Listener {
     private static Core instance;
     public static HikariDataSource hikari;
     private static SQLManager sqlManager;
+    private static UserLevelManager userLevelManager = new UserLevelManager();
     private final SQLUserManager sqlUserManager = new SQLUserManager();
     private final ScoreboardUtils scoreboardUtils = new ScoreboardUtils();
 
@@ -46,11 +50,14 @@ public final class Core extends JavaPlugin implements Listener {
 
         connect();
         sqlManager.createTables();
+        userLevelManager.loadLevels();
+
 
         for (Player online : Bukkit.getServer().getOnlinePlayers()) {
             sqlUserManager.loadUser(online.getUniqueId());
             scoreboardUtils.setScoreboard(online.getUniqueId());
         }
+
     }
 
     @Override

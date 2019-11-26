@@ -4,6 +4,7 @@ import me.flame.galantic.Core;
 import me.flame.galantic.combatlogger.CombatLoggerManager;
 import me.flame.galantic.commands.gui.utils.ItemBuilder;
 import me.flame.galantic.sql.SQLUser;
+import me.flame.galantic.sql.managers.SQLManager;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.FileManager;
 import org.bukkit.Bukkit;
@@ -109,6 +110,41 @@ public class PvPEventListener implements Listener {
             e.setCancelled(true);
         }
 
+        if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
+            p.setHealth(0);
+            UUID killerUUID = inFight.get(p.getUniqueId());
+            Player killer = Bukkit.getServer().getPlayer(killerUUID);
+
+            p.sendMessage("Je bent vermoord door " + killer.getName());
+
+            for (SQLUser user : SQLUserManager.userList) {
+                if (user.getUuid() == p.getUniqueId()) {
+                    user.setDeaths(user.getDeaths() + 1);
+
+                    killstreak.replace(user.getUuid(), 0);
+
+                    p.sendMessage("Verloren van " + killer.getName());
+
+                    combatLoggerManager.removeCombat(p);
+                    p.spigot().respawn();
+                }
+                if (user.getUuid() == killer.getUniqueId()) {
+                    user.setKills(user.getKills() + 1);
+                    user.setPvpCoins(user.getPvpCoins() + 0.5);
+                    if (killstreak.containsKey(user.getUuid())) {
+                        killstreak.replace(user.getUuid(), killstreak.get(user.getUuid()) + 1);
+                    } else {
+                        killstreak.put(user.getUuid(), 1);
+                    }
+                    if (user.getBestStreak() < killstreak.get(user.getUuid())) {
+                        user.setBestStreak(killstreak.get(user.getUuid()));
+                    }
+
+                    killer.sendMessage("Je hebt zojuist " + p.getName() + " vermoord");
+                }
+            }
+
+        }
     }
 
     @EventHandler
@@ -120,7 +156,7 @@ public class PvPEventListener implements Listener {
 
         if (e.getDamager() instanceof Arrow) {
             Arrow arrow = (Arrow) e.getDamager();
-            if(arrow.getShooter() instanceof Player){
+            if (arrow.getShooter() instanceof Player) {
                 Player shooter = (Player) arrow.getShooter();
                 combatLoggerManager.setCombat(20, shooter);
                 combatLoggerManager.setCombat(20, p);
