@@ -5,6 +5,7 @@ import me.flame.galantic.listeners.PvPEventListener;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
+import me.flame.galantic.utils.FileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,15 +46,15 @@ public class CombatLogEvent implements Listener {
         Player p = e.getPlayer();
         if(combatLogged.contains(p.getUniqueId())){
             p.sendMessage(ChatUtils.format("&7Welcome back! Please do not combat log again."));
-            p.sendMessage(ChatUtils.format("&8» &7Punishment: &c-5 Coins &7& &c+2 Deaths"));
+            p.sendMessage(ChatUtils.format("&8» &7Punishment: &c-" + FileManager.get("config.yml").getInt("PvP-Settings.coins-per-combatlog") + " Coins &7& &c+2 Deaths"));
             for(SQLUser user : SQLUserManager.userList){
                 if(user.getUuid() == p.getUniqueId()){
                     user.setDeaths(user.getDeaths() + 2);
-                    if(user.getPvpCoins() - 5 < 0){
+                    if(user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-combatlog") < 0){
                         user.setPvpCoins(0);
                         break;
                     }
-                    user.setPvpCoins(user.getPvpCoins() - 5);
+                    user.setPvpCoins(user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-combatlog"));
                     break;
                 }
             }

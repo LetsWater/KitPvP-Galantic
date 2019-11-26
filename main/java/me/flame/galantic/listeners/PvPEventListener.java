@@ -50,20 +50,25 @@ public class PvPEventListener implements Listener {
 
                 p.sendMessage("Verloren van " + killer.getName());
 
+                if (user.getPvpCoins() - user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death") < 0) {
+                    user.setPvpCoins(0);
+                } else {
+                    user.setPvpCoins(user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death"));
+                }
+
                 combatLoggerManager.removeCombat(p);
                 p.spigot().respawn();
             }
 
             if (user.getUuid() == killer.getUniqueId()) {
                 user.setKills(user.getKills() + 1);
-                user.setPvpCoins(user.getPvpCoins() + 0.5);
-
+                user.setPvpCoins(user.getPvpCoins() + FileManager.get("config.yml").getInt("PvP-Settings.coins-per-kill"));
+                user.setXp(user.getXp() + FileManager.get("config.yml").getInt("PvP-Settings.xp-per-kill"));
                 if (killstreak.containsKey(user.getUuid())) {
                     killstreak.replace(user.getUuid(), killstreak.get(user.getUuid()) + 1);
                 } else {
                     killstreak.put(user.getUuid(), 1);
                 }
-
                 if (user.getBestStreak() < killstreak.get(user.getUuid())) {
                     user.setBestStreak(killstreak.get(user.getUuid()));
                 }
@@ -125,12 +130,20 @@ public class PvPEventListener implements Listener {
 
                     p.sendMessage("Verloren van " + killer.getName());
 
+                    if (user.getPvpCoins() - user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death") < 0) {
+                        user.setPvpCoins(0);
+                    } else {
+                        user.setPvpCoins(user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death"));
+                    }
+
                     combatLoggerManager.removeCombat(p);
                     p.spigot().respawn();
                 }
+
                 if (user.getUuid() == killer.getUniqueId()) {
                     user.setKills(user.getKills() + 1);
-                    user.setPvpCoins(user.getPvpCoins() + 0.5);
+                    user.setPvpCoins(user.getPvpCoins() + FileManager.get("config.yml").getInt("PvP-Settings.coins-per-kill"));
+                    user.setXp(user.getXp() + FileManager.get("config.yml").getInt("PvP-Settings.xp-per-kill"));
                     if (killstreak.containsKey(user.getUuid())) {
                         killstreak.replace(user.getUuid(), killstreak.get(user.getUuid()) + 1);
                     } else {

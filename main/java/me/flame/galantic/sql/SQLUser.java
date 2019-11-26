@@ -67,6 +67,9 @@ public class SQLUser {
         return xp;
     }
 
+    public void setXp(Integer xp) {
+        this.xp = xp;
+    }
 
     public String getUsing_kit() {
         return using_kit;
