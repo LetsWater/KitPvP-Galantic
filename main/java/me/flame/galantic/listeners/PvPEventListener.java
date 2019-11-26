@@ -1,11 +1,13 @@
 package me.flame.galantic.listeners;
 
+import javafx.scene.layout.Priority;
 import me.flame.galantic.Core;
 import me.flame.galantic.combatlogger.CombatLoggerManager;
 import me.flame.galantic.commands.gui.utils.ItemBuilder;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.managers.SQLManager;
 import me.flame.galantic.sql.managers.SQLUserManager;
+import me.flame.galantic.utils.ChatUtils;
 import me.flame.galantic.utils.FileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -37,11 +39,14 @@ public class PvPEventListener implements Listener {
     @EventHandler
     public void PvpEvent(PlayerDeathEvent e) {
         if (!(e.getEntityType() == EntityType.PLAYER)) return;
-        e.setDeathMessage(null);
-
         Player p = e.getEntity().getPlayer();
+        e.setDeathMessage(null);
+        if (p.getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.VOID) return;
+
         Player killer = e.getEntity().getKiller();
         e.getDrops().clear();
+
+
         for (SQLUser user : SQLUserManager.userList) {
             if (user.getUuid() == p.getUniqueId()) {
                 user.setDeaths(user.getDeaths() + 1);
@@ -50,7 +55,7 @@ public class PvPEventListener implements Listener {
 
                 p.sendMessage("Verloren van " + killer.getName());
 
-                if (user.getPvpCoins() - user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death") < 0) {
+                if (user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death") < 0) {
                     user.setPvpCoins(0);
                 } else {
                     user.setPvpCoins(user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death"));
@@ -58,6 +63,7 @@ public class PvPEventListener implements Listener {
 
                 combatLoggerManager.removeCombat(p);
                 p.spigot().respawn();
+                break;
             }
 
             if (user.getUuid() == killer.getUniqueId()) {
@@ -75,6 +81,7 @@ public class PvPEventListener implements Listener {
 
 
                 killer.sendMessage("Gewonnen van " + p.getName());
+                break;
             }
         }
     }
@@ -116,47 +123,29 @@ public class PvPEventListener implements Listener {
         }
 
         if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
-            p.setHealth(0);
-            UUID killerUUID = inFight.get(p.getUniqueId());
-            Player killer = Bukkit.getServer().getPlayer(killerUUID);
-
-            p.sendMessage("Je bent vermoord door " + killer.getName());
-
+            p.setHealth(0.5);
             for (SQLUser user : SQLUserManager.userList) {
                 if (user.getUuid() == p.getUniqueId()) {
                     user.setDeaths(user.getDeaths() + 1);
-
-                    killstreak.replace(user.getUuid(), 0);
-
-                    p.sendMessage("Verloren van " + killer.getName());
-
-                    if (user.getPvpCoins() - user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death") < 0) {
-                        user.setPvpCoins(0);
-                    } else {
-                        user.setPvpCoins(user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-death"));
+                    if (inFight.containsKey(p.getUniqueId())) {
+                        UUID targetUUID = inFight.get(p.getUniqueId());
+                        Player target = Bukkit.getServer().getPlayer(targetUUID);
+                        p.sendMessage(ChatUtils.format("&cJe bent vermoord door " + target.getName()));
                     }
-
-                    combatLoggerManager.removeCombat(p);
-                    p.spigot().respawn();
                 }
-
-                if (user.getUuid() == killer.getUniqueId()) {
-                    user.setKills(user.getKills() + 1);
-                    user.setPvpCoins(user.getPvpCoins() + FileManager.get("config.yml").getInt("PvP-Settings.coins-per-kill"));
-                    user.setXp(user.getXp() + FileManager.get("config.yml").getInt("PvP-Settings.xp-per-kill"));
-                    if (killstreak.containsKey(user.getUuid())) {
-                        killstreak.replace(user.getUuid(), killstreak.get(user.getUuid()) + 1);
-                    } else {
-                        killstreak.put(user.getUuid(), 1);
-                    }
-                    if (user.getBestStreak() < killstreak.get(user.getUuid())) {
-                        user.setBestStreak(killstreak.get(user.getUuid()));
-                    }
-
-                    killer.sendMessage("Je hebt zojuist " + p.getName() + " vermoord");
-                }
+                break;
             }
-
+            for (SQLUser user : SQLUserManager.userList) {
+                if (inFight.containsKey(p.getUniqueId())) {
+                    UUID targetUUID = inFight.get(p.getUniqueId());
+                    Player target = Bukkit.getServer().getPlayer(targetUUID);
+                    if (user.getUuid() == target.getUniqueId()) {
+                        user.setKills(user.getKills() + 1);
+                        target.sendMessage(ChatUtils.format("&aJe hebt zojuist " + p.getName() + " vermoord!"));
+                    }
+                }
+                break;
+            }
         }
     }
 
@@ -173,22 +162,31 @@ public class PvPEventListener implements Listener {
                 Player shooter = (Player) arrow.getShooter();
                 combatLoggerManager.setCombat(20, shooter);
                 combatLoggerManager.setCombat(20, p);
-                inFight.put(shooter.getUniqueId(), p.getUniqueId());
-                inFight.put(p.getUniqueId(), shooter.getUniqueId());
+                if (!inFight.containsKey(shooter.getUniqueId())) {
+                    inFight.put(shooter.getUniqueId(), p.getUniqueId());
+                }
+
+                if (!inFight.containsKey(p.getUniqueId())) {
+                    inFight.put(p.getUniqueId(), shooter.getUniqueId());
+                }
 
             }
         }
 
-        Player damager;
+
         if (e.getDamager().getType() == EntityType.PLAYER) {
-            damager = (Player) e.getDamager();
+            Player damager = (Player) e.getDamager();
             combatLoggerManager.setCombat(20, damager);
             combatLoggerManager.setCombat(20, p);
-            inFight.put(damager.getUniqueId(), p.getUniqueId());
-            inFight.put(p.getUniqueId(), damager.getUniqueId());
-        }
 
-        p.setVelocity(e.getDamager().getLocation().getDirection().setY(-0.2).normalize().multiply(-0.2));
+            if (!inFight.containsKey(damager.getUniqueId())) {
+                inFight.put(damager.getUniqueId(), p.getUniqueId());
+            }
+
+            if (!inFight.containsKey(p.getUniqueId())) {
+                inFight.put(p.getUniqueId(), damager.getUniqueId());
+            }
+        }
     }
 
     @EventHandler

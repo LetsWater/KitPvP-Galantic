@@ -30,7 +30,7 @@ public class ScoreboardUtils {
                 }
 
                 obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-                obj.setDisplayName(ChatUtils.format("&b&lGalanticMC"));
+                obj.setDisplayName(ChatUtils.format("&b&lKitPvP"));
 
                 Score spacer4 = obj.getScore(ChatUtils.format("&4"));
                 spacer4.setScore(12);
@@ -39,47 +39,47 @@ public class ScoreboardUtils {
                 spacer1.setScore(8);
 
                 Team playerPing = scoreboard.registerNewTeam("ping");
-                playerPing.addEntry(ChatUtils.format(" &bPing: &f"));
+                playerPing.addEntry(ChatUtils.format("&fPing: &e"));
                 playerPing.setSuffix(String.valueOf(ping));
-                obj.getScore(ChatUtils.format(" &bPing: &f")).setScore(7);
+                obj.getScore(ChatUtils.format("&fPing: &e")).setScore(7);
 
                 Team playerKit = scoreboard.registerNewTeam("usingkit");
-                playerKit.addEntry(ChatUtils.format(" &bKit: &f"));
+                playerKit.addEntry(ChatUtils.format("&fKit: &6"));
                 playerKit.setSuffix(user.getUsing_kit());
-                obj.getScore(ChatUtils.format(" &bKit: &f")).setScore(11);
+                obj.getScore(ChatUtils.format("&fKit: &6")).setScore(11);
 
                 Team playerLevel = scoreboard.registerNewTeam("level");
-                playerLevel.addEntry(ChatUtils.format(" &bLevel: &f"));
+                playerLevel.addEntry(ChatUtils.format("&fLevel: &e"));
                 playerLevel.setSuffix(String.valueOf(user.getLevel()));
-                obj.getScore(ChatUtils.format(" &bLevel: &f")).setScore(10);
+                obj.getScore(ChatUtils.format("&fLevel: &e")).setScore(10);
 
                 Team playerCoins = scoreboard.registerNewTeam("coins");
-                playerCoins.addEntry(ChatUtils.format(" &bCoins: &f"));
+                playerCoins.addEntry(ChatUtils.format("&fCoins: &e"));
                 playerCoins.setSuffix(String.valueOf(user.getPvpCoins()));
-                obj.getScore(ChatUtils.format(" &bCoins: &f")).setScore(9);
+                obj.getScore(ChatUtils.format("&fCoins: &e")).setScore(9);
 
                 Score spacer2 = obj.getScore(ChatUtils.format("&2"));
                 spacer2.setScore(6);
 
                 Team playerKills = scoreboard.registerNewTeam("kills");
-                playerKills.addEntry(ChatUtils.format(" &bKills: &f"));
+                playerKills.addEntry(ChatUtils.format("&fKills: &e"));
                 playerKills.setSuffix(String.valueOf(user.getKills()));
-                obj.getScore(ChatUtils.format(" &bKills: &f")).setScore(5);
+                obj.getScore(ChatUtils.format("&fKills: &e")).setScore(5);
 
                 Team playerDeaths = scoreboard.registerNewTeam("deaths");
-                playerDeaths.addEntry(ChatUtils.format(" &bDeaths: &f"));
+                playerDeaths.addEntry(ChatUtils.format("&fDeaths: &e"));
                 playerDeaths.setSuffix(String.valueOf(user.getDeaths()));
-                obj.getScore(ChatUtils.format(" &bDeaths: &f")).setScore(4);
+                obj.getScore(ChatUtils.format("&fDeaths: &e")).setScore(4);
 
                 Team playerKillstreak = scoreboard.registerNewTeam("killstreak");
-                playerKillstreak.addEntry(ChatUtils.format(" &bKillstreak: &f"));
+                playerKillstreak.addEntry(ChatUtils.format("&fKillstreak: &e"));
                 playerKillstreak.setSuffix(String.valueOf(PvPEventListener.killstreak.get(uuid)));
-                obj.getScore(ChatUtils.format(" &bKillstreak: &f")).setScore(3);
+                obj.getScore(ChatUtils.format("&fKillstreak: &e")).setScore(3);
 
                 Score spacer3 = obj.getScore(ChatUtils.format("&3"));
                 spacer3.setScore(2);
 
-                Score footer = obj.getScore(ChatUtils.format("&bplay.galanticmc.net"));
+                Score footer = obj.getScore(ChatUtils.format("&7play.galanticmc.net"));
                 footer.setScore(1);
 
                 new BukkitRunnable(){

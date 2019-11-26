@@ -12,9 +12,9 @@ public class SQLUser {
     private Integer deaths;
     private Integer bestStreak;
     private Integer level;
-    private Integer xp;
+    private double xp;
 
-    public SQLUser(String name, UUID uuid, String using_kit, double pvpCoins, Integer kills, Integer deaths, Integer bestStreak, Integer level, Integer xp) {
+    public SQLUser(String name, UUID uuid, String using_kit, double pvpCoins, Integer kills, Integer deaths, Integer bestStreak, Integer level, double xp) {
         this.name = name;
         this.uuid = uuid;
         this.using_kit = using_kit;
@@ -63,11 +63,11 @@ public class SQLUser {
         return level;
     }
 
-    public Integer getXp() {
+    public double getXp() {
         return xp;
     }
 
-    public void setXp(Integer xp) {
+    public void setXp(double xp) {
         this.xp = xp;
     }
 
