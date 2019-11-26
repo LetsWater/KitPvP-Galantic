@@ -38,7 +38,6 @@ public class JoinEventListener implements Listener {
         p.getInventory().setBoots(null);
 
         p.getInventory().setItem(0, new ItemBuilder(Material.ARMOR_STAND, 1).setDisplayName("&aKits").build());
-        p.getInventory().setItem(1, new ItemBuilder(Material.NAME_TAG, 1).setDisplayName("&aEvents &c(Coming Soon)").build());
         p.getInventory().setItem(4, new ItemBuilder(Material.COMPASS, 1).setDisplayName("&a&lServer Selector").build());
         p.getInventory().setItem(7, new ItemBuilder(Material.CHEST, 1).setDisplayName("&aCosmetics").build());
         p.getInventory().setItem(8, new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setDisplayName("&aProfile").setSkullOwner(p.getName()).build());

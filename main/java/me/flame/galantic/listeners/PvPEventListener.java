@@ -1,11 +1,9 @@
 package me.flame.galantic.listeners;
 
-import javafx.scene.layout.Priority;
 import me.flame.galantic.Core;
 import me.flame.galantic.combatlogger.CombatLoggerManager;
 import me.flame.galantic.commands.gui.utils.ItemBuilder;
 import me.flame.galantic.sql.SQLUser;
-import me.flame.galantic.sql.managers.SQLManager;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
 import me.flame.galantic.utils.FileManager;
@@ -41,7 +39,9 @@ public class PvPEventListener implements Listener {
         if (!(e.getEntityType() == EntityType.PLAYER)) return;
         Player p = e.getEntity().getPlayer();
         e.setDeathMessage(null);
-        if (p.getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.VOID) return;
+
+        if(e.getEntity().getKiller() == null) return;
+        if (!(e.getEntity().getKiller().getType() == EntityType.PLAYER)) return;
 
         Player killer = e.getEntity().getKiller();
         e.getDrops().clear();
@@ -63,7 +63,6 @@ public class PvPEventListener implements Listener {
 
                 combatLoggerManager.removeCombat(p);
                 p.spigot().respawn();
-                break;
             }
 
             if (user.getUuid() == killer.getUniqueId()) {
@@ -99,7 +98,6 @@ public class PvPEventListener implements Listener {
             @Override
             public void run() {
                 p.getInventory().setItem(0, new ItemBuilder(Material.ARMOR_STAND, 1).setDisplayName("&aKits").build());
-                p.getInventory().setItem(1, new ItemBuilder(Material.NAME_TAG, 1).setDisplayName("&aEvents &c(Coming Soon)").build());
                 p.getInventory().setItem(4, new ItemBuilder(Material.COMPASS, 1).setDisplayName("&a&lServer Selector").build());
                 p.getInventory().setItem(7, new ItemBuilder(Material.CHEST, 1).setDisplayName("&aCosmetics").build());
                 p.getInventory().setItem(8, new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setDisplayName("&aProfile").setSkullOwner(p.getName()).build());
@@ -109,7 +107,7 @@ public class PvPEventListener implements Listener {
         }, 10);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void pvpEvent(EntityDamageEvent e) {
         if (!(e.getEntityType() == EntityType.PLAYER)) return;
 
@@ -133,18 +131,15 @@ public class PvPEventListener implements Listener {
                         p.sendMessage(ChatUtils.format("&cJe bent vermoord door " + target.getName()));
                     }
                 }
-                break;
-            }
-            for (SQLUser user : SQLUserManager.userList) {
                 if (inFight.containsKey(p.getUniqueId())) {
                     UUID targetUUID = inFight.get(p.getUniqueId());
                     Player target = Bukkit.getServer().getPlayer(targetUUID);
                     if (user.getUuid() == target.getUniqueId()) {
                         user.setKills(user.getKills() + 1);
                         target.sendMessage(ChatUtils.format("&aJe hebt zojuist " + p.getName() + " vermoord!"));
+                        break;
                     }
                 }
-                break;
             }
         }
     }
@@ -162,13 +157,9 @@ public class PvPEventListener implements Listener {
                 Player shooter = (Player) arrow.getShooter();
                 combatLoggerManager.setCombat(20, shooter);
                 combatLoggerManager.setCombat(20, p);
-                if (!inFight.containsKey(shooter.getUniqueId())) {
-                    inFight.put(shooter.getUniqueId(), p.getUniqueId());
-                }
+                inFight.put(shooter.getUniqueId(), p.getUniqueId());
+                inFight.put(p.getUniqueId(), shooter.getUniqueId());
 
-                if (!inFight.containsKey(p.getUniqueId())) {
-                    inFight.put(p.getUniqueId(), shooter.getUniqueId());
-                }
 
             }
         }
