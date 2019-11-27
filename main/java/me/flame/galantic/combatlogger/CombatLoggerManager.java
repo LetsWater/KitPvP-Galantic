@@ -4,6 +4,8 @@ import me.flame.galantic.Core;
 import me.flame.galantic.combatlogger.interfaces.ICombatLoggerManager;
 import me.flame.galantic.listeners.PvPEventListener;
 import me.flame.galantic.utils.ChatUtils;
+import me.galantic.galanticcore.api.CoreAPI;
+
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -18,8 +20,8 @@ public class CombatLoggerManager implements ICombatLoggerManager {
     @Override
     public void setCombat(Integer amount, Player p) {
         if (!hasActiveCombat(p)) {
-
-            p.sendMessage(ChatUtils.format("&cYou are now in combat!"));
+        	
+        	CoreAPI.getMessageManager().sendMessage( p, "combat_activated" );
             cooldownSeconds.put(p.getUniqueId(), amount);
             cooldownTask.put(p.getUniqueId(), new BukkitRunnable() {
                 @Override
@@ -43,7 +45,7 @@ public class CombatLoggerManager implements ICombatLoggerManager {
     @Override
     public void removeCombat(Player p) {
         if (hasActiveCombat(p)) {
-            p.sendMessage(ChatUtils.format("&aYou are no longer in combat!"));
+        	CoreAPI.getMessageManager().sendMessage( p, "combat_disabled");
 
             cooldownTask.get(p.getUniqueId()).cancel();
             cooldownTask.remove(p.getUniqueId());
@@ -56,11 +58,11 @@ public class CombatLoggerManager implements ICombatLoggerManager {
     @Override
     public void getCombat(Player p) {
         if (!hasActiveCombat(p)) {
-            p.sendMessage(ChatUtils.format("&aYou don't have an active CombatTag."));
+        	CoreAPI.getMessageManager().sendMessage( p, "combat_no_active" );
             return;
         }
-
-        p.sendMessage(ChatUtils.format("&7You are in combat for &c" + cooldownSeconds.get(p.getUniqueId()) + " &7seconds!"));
+        
+        CoreAPI.getMessageManager().sendMessage( p, "combat_enabled", cooldownSeconds.get( p.getUniqueId() ) );
     }
 
     @Override

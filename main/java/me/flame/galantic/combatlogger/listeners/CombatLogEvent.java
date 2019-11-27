@@ -6,6 +6,8 @@ import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
 import me.flame.galantic.utils.FileManager;
+import me.galantic.galanticcore.api.CoreAPI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,48 +20,50 @@ import java.util.UUID;
 
 public class CombatLogEvent implements Listener {
 
-    private final CombatLoggerManager combatLoggerManager = new CombatLoggerManager();
-    private ArrayList<UUID> combatLogged = new ArrayList<>();
+	private final CombatLoggerManager combatLoggerManager = new CombatLoggerManager();
+	private ArrayList< UUID > combatLogged = new ArrayList<>();
 
-    @EventHandler
-    public void QuitInComat(PlayerQuitEvent e){
-        Player p = e.getPlayer();
+	@EventHandler
+	public void QuitInComat( PlayerQuitEvent e ) {
+		Player p = e.getPlayer();
 
-        if(combatLoggerManager.hasActiveCombat(p)){
-            combatLogged.add(p.getUniqueId());
+		if ( combatLoggerManager.hasActiveCombat( p ) ) {
+			combatLogged.add( p.getUniqueId() );
 
-            Player target = Bukkit.getServer().getPlayer(PvPEventListener.inFight.get(p.getUniqueId()));
-            target.sendMessage(ChatUtils.format("&c" + p.getName() + " &7is uitgelogd! Je hebt hier &c1 &7kill voor gekregen."));
-            for(SQLUser user : SQLUserManager.userList){
-                if(user.getUuid() == target.getUniqueId()){
-                    user.setKills(user.getKills() + 1);
-                    user.setPvpCoins(user.getPvpCoins() + 0.5);
-                    break;
-                }
-            }
+			Player target = Bukkit.getServer().getPlayer( PvPEventListener.inFight.get( p.getUniqueId() ) );
+			CoreAPI.getMessageManager().sendMessage( target, "combat_logged", p.getName() );
+			for ( SQLUser user : SQLUserManager.userList ) {
+				if ( user.getUuid() == target.getUniqueId() ) {
+					user.setKills( user.getKills() + 1 );
+					user.setPvpCoins( user.getPvpCoins() + 0.5 );
+					break;
+				}
+			}
 
-            combatLoggerManager.removeCombat(p);
-        }
-    }
+			combatLoggerManager.removeCombat( p );
+		}
+	}
 
-    @EventHandler
-    public void JoinedAfterCombatEvent(PlayerJoinEvent e){
-        Player p = e.getPlayer();
-        if(combatLogged.contains(p.getUniqueId())){
-            p.sendMessage(ChatUtils.format("&7Welcome back! Please do not combat log again."));
-            p.sendMessage(ChatUtils.format("&8» &7Punishment: &c-" + FileManager.get("config.yml").getInt("PvP-Settings.coins-per-combatlog") + " Coins &7& &c+2 Deaths"));
-            for(SQLUser user : SQLUserManager.userList){
-                if(user.getUuid() == p.getUniqueId()){
-                    user.setDeaths(user.getDeaths() + 2);
-                    if(user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-combatlog") < 0){
-                        user.setPvpCoins(0);
-                        break;
-                    }
-                    user.setPvpCoins(user.getPvpCoins() - FileManager.get("config.yml").getInt("PvP-Settings.coins-per-combatlog"));
-                    break;
-                }
-            }
-            combatLogged.remove(p.getUniqueId());
-        }
-    }
+	@EventHandler
+	public void JoinedAfterCombatEvent( PlayerJoinEvent e ) {
+		Player p = e.getPlayer();
+		if ( combatLogged.contains( p.getUniqueId() ) ) {
+			CoreAPI.getMessageManager().sendMessage( p, "combat_logged_welcome_back",
+					FileManager.get( "config.yml" ).getInt( "PvP-Settings.coins-per-combatlog" ) );
+			for ( SQLUser user : SQLUserManager.userList ) {
+				if ( user.getUuid() == p.getUniqueId() ) {
+					user.setDeaths( user.getDeaths() + 2 );
+					if ( user.getPvpCoins()
+							- FileManager.get( "config.yml" ).getInt( "PvP-Settings.coins-per-combatlog" ) < 0 ) {
+						user.setPvpCoins( 0 );
+						break;
+					}
+					user.setPvpCoins( user.getPvpCoins()
+							- FileManager.get( "config.yml" ).getInt( "PvP-Settings.coins-per-combatlog" ) );
+					break;
+				}
+			}
+			combatLogged.remove( p.getUniqueId() );
+		}
+	}
 }

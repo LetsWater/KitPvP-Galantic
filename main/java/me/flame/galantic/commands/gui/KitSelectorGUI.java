@@ -18,7 +18,7 @@ public class KitSelectorGUI {
         Inventory selector = Bukkit.createInventory(null, 54, ChatUtils.format("&9Kit Selector"));
 
         selector.setItem(20, new ItemBuilder(Material.IRON_HELMET, 1).setDisplayName("&9Warrior")
-                .setLore(false ,""
+                .setLore(false, ""
                         , "&7&oRight click to select the kit."
                         , "&7&oLeft click to view the kit.").build());
 

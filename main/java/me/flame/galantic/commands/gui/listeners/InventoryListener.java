@@ -4,6 +4,8 @@ import me.flame.galantic.commands.gui.KitSelectorGUI;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
+import me.galantic.galanticcore.api.CoreAPI;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,19 +41,19 @@ public class InventoryListener implements Listener {
             if (e.getCurrentItem().getType() != Material.AIR) {
                 String kitName = e.getCurrentItem().getItemMeta().getDisplayName().replace("§9", "").replaceAll("§l", "").toLowerCase();
                 for (SQLUser user : SQLUserManager.userList) {
-                    //if (p.hasPermission("kitpvp.kit." + kitName) || kitName.equals("warrior")||kitName.equals("archer") || kitName.equals("tank") || kitName.equals("axe") || kitName.equals("ninja")){
-                    if (user.getUuid() == p.getUniqueId()) {
-                        user.setUsing_kit(kitName);
+                    if (p.hasPermission("kitpvp.kit." + kitName) || kitName.equals("warrior") || kitName.equals("archer") || kitName.equals("tank") || kitName.equals("axe") || kitName.equals("ninja")) {
+                        if (user.getUuid() == p.getUniqueId()) {
+                            user.setUsing_kit(kitName);
 
-                        p.sendMessage(kitName + " gekozen!");
+                            CoreAPI.getMessageManager().sendMessage(p, "kit_chosen", kitName);
+                            p.closeInventory();
+                            break;
+                        }
+                    } else {
+                        p.sendMessage(ChatUtils.format("Geen permissions voor " + kitName));
                         p.closeInventory();
                         break;
                     }
-                    //} else {
-                    //    p.sendMessage(ChatUtils.format("Geen permissions voor " + kitName));
-                    //    p.closeInventory();
-                    //    break;
-                    // }
                 }
             }
         }

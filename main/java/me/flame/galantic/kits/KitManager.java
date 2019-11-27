@@ -4,6 +4,8 @@ import me.flame.galantic.kits.giveKits.donatorKits.*;
 import me.flame.galantic.kits.giveKits.normalKits.*;
 import me.flame.galantic.kits.interfaces.IKitManager;
 import me.flame.galantic.utils.ChatUtils;
+import me.galantic.galanticcore.api.CoreAPI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -17,7 +19,7 @@ public class KitManager implements IKitManager {
     public void giveKit(UUID uuid, String kit) {
         Player p = Bukkit.getPlayer(uuid);
         if (p.getInventory().getHelmet() == null) {
-            p.sendMessage(ChatUtils.format("&fJe hebt zojuist kit &9" + kit + "&f gekregen! &aSucces!"));
+        	CoreAPI.getMessageManager().sendMessage( p, "kit_received", kit );
             switch (kit) {
                 case "warrior":
                     GiveKitWarrior.giveKitWarrior(uuid);

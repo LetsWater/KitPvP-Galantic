@@ -1,7 +1,8 @@
 package me.flame.galantic.commands;
 
 import me.flame.galantic.commands.gui.StatisticGUI;
-import me.flame.galantic.utils.ChatUtils;
+
+import me.galantic.galanticcore.api.CoreAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,27 +17,27 @@ public class StatisticsCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatUtils.format("&cCommand kan niet door console error."));
+        	CoreAPI.getMessageManager().sendMessage( sender, "core_no_player_console" );
             return true;
         }
 
         Player p = (Player) sender;
         switch (args.length) {
             case 0:
-                sender.sendMessage("Opent menu");
+            	CoreAPI.getMessageManager().sendMessage( sender, "opening_menu" );
                 statisticGUI.StatisticGUI(p.getUniqueId(), p);
                 break;
             case 1:
                 Player target = Bukkit.getServer().getPlayer(args[0]);
                 if (target == null) {
-                    sender.sendMessage("Player is niet gevonden");
+                	CoreAPI.getMessageManager().sendMessage( sender, "no_player" );
                     break;
                 }
-                sender.sendMessage("Opent menu speler " + args[0]);
+            	CoreAPI.getMessageManager().sendMessage( sender, "opening_menu_target", args[0] );
                 statisticGUI.StatisticGUI(target.getUniqueId(), p);
                 break;
             default:
-                sender.sendMessage("Opent menu");
+            	CoreAPI.getMessageManager().sendMessage( sender, "opening_menu" );
                 statisticGUI.StatisticGUI(p.getUniqueId(), p);
                 break;
         }

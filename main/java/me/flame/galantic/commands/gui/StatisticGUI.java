@@ -52,7 +52,6 @@ public class StatisticGUI {
                 Integer nextLevel = user.getLevel() + 1;
                 for (UserLevel userLevel : UserLevelManager.levelList) {
                     if (userLevel.getLevel() == nextLevel) {
-                        Bukkit.broadcastMessage(""  + nextLevel);
                         StatsGUI.setItem(7, new ItemBuilder(Material.SIGN, 1)
                                 .setDisplayName("&aLevel Information")
                                 .setLore(false, " &fHuidig level &8» &7" + user.getLevel() + "/100", " &fXP &8» &7" + user.getXp() + "/" + userLevel.getXP()).build());

@@ -3,10 +3,9 @@ package me.flame.galantic.sql.levelSystem.managers;
 import me.flame.galantic.Core;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.levelSystem.UserLevel;
-import me.flame.galantic.sql.managers.SQLUserManager;
-import me.flame.galantic.utils.ChatUtils;
+
+import me.galantic.galanticcore.api.CoreAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -37,8 +36,6 @@ public class UserLevelManager {
 
             if (resultSet.next()) {
             }
-
-            Bukkit.broadcastMessage(String.valueOf(levelList.size()));
             levelData.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -54,8 +51,7 @@ public class UserLevelManager {
                             Player p = Bukkit.getServer().getPlayer(user.getUuid());
                             user.setLevel(user.getLevel() + 1);
                             user.setXp(user.getXp() - userLevel.getXP());
-
-                            p.sendMessage(ChatUtils.format("&c&l! &7Gefeliciteerd! Je bent zojuist naar level &c" + user.getLevel() + " &7gegaan!"));
+                            CoreAPI.getMessageManager().sendMessage(p, "level_up", user.getLevel());
                             p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1);
                         }
                     }

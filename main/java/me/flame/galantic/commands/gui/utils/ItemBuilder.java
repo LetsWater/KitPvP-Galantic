@@ -41,7 +41,7 @@ public class ItemBuilder {
 
         }
 
-        if(rank == true){
+        if (rank == true) {
             lore.add("");
             lore.add(ChatUtils.format("&cstore.galanticnetwork.eu"));
         }
@@ -68,9 +68,9 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setSkullOwnerUrl(String url){
+    public ItemBuilder setSkullOwnerUrl(String url) {
         SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
-        
+
 
         return this;
     }
@@ -81,16 +81,16 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder addEnchantment(Integer level, Enchantment... enchantment){
+    public ItemBuilder addEnchantment(Integer level, Enchantment... enchantment) {
 
-        for(Enchantment enchantment1 : enchantment){
+        for (Enchantment enchantment1 : enchantment) {
             itemStack.addUnsafeEnchantment(enchantment1, level);
         }
 
         return this;
     }
 
-    public ItemBuilder setUnbreakable(){
+    public ItemBuilder setUnbreakable() {
 
         ItemMeta meta = itemStack.getItemMeta();
         meta.spigot().setUnbreakable(true);

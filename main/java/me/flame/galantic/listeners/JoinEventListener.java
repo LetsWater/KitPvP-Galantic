@@ -5,13 +5,13 @@ import me.flame.galantic.sql.levelSystem.managers.UserLevelManager;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.FileManager;
 import me.flame.galantic.utils.ScoreboardUtils;
+import me.galantic.galanticcore.api.CoreAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -44,6 +44,8 @@ public class JoinEventListener implements Listener {
         p.getInventory().setItem(4, new ItemBuilder(Material.COMPASS, 1).setDisplayName("&a&lServer Selector").build());
         p.getInventory().setItem(7, new ItemBuilder(Material.CHEST, 1).setDisplayName("&aCosmetics").build());
         p.getInventory().setItem(8, new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setDisplayName("&aProfile").setSkullOwner(p.getName()).build());
+
+        CoreAPI.getUserManager().getUser(p.getUniqueId()).setTabList();
 
         String locatie = FileManager.get("config.yml").getString("spawn.locatie");
         String[] loc = locatie.split(";");

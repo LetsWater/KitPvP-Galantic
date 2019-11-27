@@ -5,6 +5,7 @@ prefix: KitPvP
 authors: [LetsFlame_]
 description: KitPvP Plugin made for Galantic.
 website: galanticmc.net
+depends: [GalanticCore]
 commands:
   stats:
     description: []
