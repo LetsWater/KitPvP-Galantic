@@ -7,15 +7,19 @@ import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static me.flame.galantic.sql.managers.SQLUserManager.userList;
+
 public class UserLevelManager {
 
     public static ArrayList<UserLevel> levelList = new ArrayList<>();
+    private static UserLevelManager instance = new UserLevelManager();
 
     public void loadLevels() {
         try (Connection connection = Core.getInstance().hikari.getConnection()) {
@@ -34,6 +38,7 @@ public class UserLevelManager {
             if (resultSet.next()) {
             }
 
+            Bukkit.broadcastMessage(String.valueOf(levelList.size()));
             levelData.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,19 +46,36 @@ public class UserLevelManager {
     }
 
     public void levelUp(UUID uuid) {
-        for (SQLUser user : SQLUserManager.userList) {
+        for (SQLUser user : userList) {
             if (user.getUuid() == uuid) {
                 for (UserLevel userLevel : levelList) {
                     if (userLevel.getLevel() == user.getLevel() + 1) {
                         if (user.getXp() >= userLevel.getXP()) {
                             Player p = Bukkit.getServer().getPlayer(user.getUuid());
+                            user.setLevel(user.getLevel() + 1);
+                            user.setXp(user.getXp() - userLevel.getXP());
 
-                            p.sendMessage(ChatUtils.format("&c&l! &7Gefeliciteerd! Je bent zojuist naar level &c" + user.getLevel() + 1 + " &7gegaan!"));
-                            user.setXp((int) (user.getXp() - userLevel.getXP()));
+                            p.sendMessage(ChatUtils.format("&c&l! &7Gefeliciteerd! Je bent zojuist naar level &c" + user.getLevel() + " &7gegaan!"));
+                            p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1);
                         }
                     }
                 }
             }
         }
+    }
+
+    public void setXPLevel(UUID uuid) {
+        for (SQLUser user : userList) {
+            if (user.getUuid() == uuid) {
+                Player p = Bukkit.getServer().getPlayer(user.getUuid());
+                p.setLevel(user.getLevel());
+
+                return;
+            }
+        }
+    }
+
+    public static UserLevelManager getInstance() {
+        return instance;
     }
 }

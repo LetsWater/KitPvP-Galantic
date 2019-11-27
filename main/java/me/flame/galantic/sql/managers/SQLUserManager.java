@@ -4,8 +4,12 @@ import me.flame.galantic.Core;
 import me.flame.galantic.listeners.PvPEventListener;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.interfaces.ISQLUser;
+import me.flame.galantic.sql.levelSystem.UserLevel;
+import me.flame.galantic.sql.levelSystem.managers.UserLevelManager;
+import me.flame.galantic.utils.FileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,16 +26,16 @@ public class SQLUserManager implements ISQLUser {
 
     @Override
     public void registerUser(UUID uuid) {
-        try(Connection connection = Core.getInstance().hikari.getConnection()){
+        try (Connection connection = Core.getInstance().hikari.getConnection()) {
             OfflinePlayer p = Bukkit.getPlayer(uuid);
             PreparedStatement insert = connection.prepareStatement("SELECT * FROM `user_data` WHERE uuid = '" + uuid + "';");
             ResultSet result = insert.executeQuery();
 
-            if(!result.next()) {
+            if (!result.next()) {
                 insert.executeUpdate("INSERT INTO `user_data` (`uuid`, `name`, `using_kit`, `pvp_coins`, `kills`, `deaths`, `best_streak`)  VALUE ('" + uuid + "', '" + p.getName() + "', 'warrior' , '0', '0', '0', '0');");
-                insert.executeUpdate("INSERT INTO `user_levels` (`uuid`, `name`, `level`, `xp`) VALUE ('" + uuid + "', '" + p.getName() + "', '0', '0');");
+                insert.executeUpdate("INSERT INTO `user_levels` (`uuid`, `name`, `level`, `xp`) VALUE ('" + uuid + "', '" + p.getName() + "', '1', '0');");
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             loadUser(uuid);
@@ -40,7 +44,7 @@ public class SQLUserManager implements ISQLUser {
 
     @Override
     public void loadUser(UUID uuid) {
-        try(Connection connection = Core.getInstance().hikari.getConnection()){
+        try (Connection connection = Core.getInstance().hikari.getConnection()) {
             OfflinePlayer p = Bukkit.getPlayer(uuid);
 
             PreparedStatement userData = connection.prepareStatement("SELECT * FROM `user_data` WHERE uuid = '" + uuid + "';");
@@ -49,7 +53,7 @@ public class SQLUserManager implements ISQLUser {
             ResultSet resultData = userData.executeQuery();
             ResultSet resultLevels = userLevels.executeQuery();
 
-            if(resultData.next() && resultLevels.next()){
+            if (resultData.next() && resultLevels.next()) {
 
                 SQLUser user;
                 String name = p.getName();
@@ -61,7 +65,7 @@ public class SQLUserManager implements ISQLUser {
                 Integer level = resultLevels.getInt("level");
                 Integer xp = resultLevels.getInt("xp");
 
-                user = new SQLUser(name, uuid, using_kit , pvpCoins, kills, deaths, bestStreak, level, xp);
+                user = new SQLUser(name, uuid, using_kit, pvpCoins, kills, deaths, bestStreak, level, xp);
                 userList.add(user);
 
                 PvPEventListener.killstreak.put(uuid, 0);
@@ -73,16 +77,16 @@ public class SQLUserManager implements ISQLUser {
             userData.close();
             userLevels.close();
 
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void saveUser(UUID uuid) {
-        for(SQLUser user : SQLUserManager.userList){
-            if(user.getUuid() == uuid){
-                try(Connection connection = Core.getInstance().hikari.getConnection()){
+        for (SQLUser user : SQLUserManager.userList) {
+            if (user.getUuid() == uuid) {
+                try (Connection connection = Core.getInstance().hikari.getConnection()) {
                     PreparedStatement userData = connection.prepareStatement("SELECT * FROM `user_data` WHERE uuid = '" + uuid + "';");
                     PreparedStatement userLevels = connection.prepareStatement("SELECT * FROM `user_levels` WHERE uuid = '" + uuid + "';");
 
@@ -100,6 +104,37 @@ public class SQLUserManager implements ISQLUser {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    public void addRewards(UUID uuid) {
+        for (SQLUser user : SQLUserManager.userList) {
+            if (user.getUuid() == uuid) {
+                user.setKills(user.getKills() + 1);
+                user.setPvpCoins(user.getPvpCoins() + FileManager.get("config.yml").getDouble("PvP-Settings.coins-per-kill"));
+                user.setXp(user.getXp() + FileManager.get("config.yml").getDouble("PvP-Settings.xp-per-kill"));
+                UserLevelManager.getInstance().levelUp(user.getUuid());
+
+                UserLevelManager.getInstance().setXPLevel(user.getUuid());
+                break;
+            }
+        }
+    }
+
+    public void removeRewards(UUID uuid) {
+        for (SQLUser user : SQLUserManager.userList) {
+            if (user.getUuid() == uuid) {
+                user.setDeaths(user.getDeaths() + 1);
+
+                if (user.getPvpCoins() - FileManager.get("config.yml").getDouble("PvP-Settings.coins-per-death") < 0) {
+                    user.setPvpCoins(0);
+                    break;
+                }
+                user.setPvpCoins(user.getPvpCoins() - FileManager.get("config.yml").getDouble("PvP-Settings.coins-per-death"));
+
+                UserLevelManager.getInstance().setXPLevel(user.getUuid());
+                break;
             }
         }
     }

@@ -1,6 +1,7 @@
 package me.flame.galantic.listeners;
 
 import me.flame.galantic.commands.gui.utils.ItemBuilder;
+import me.flame.galantic.sql.levelSystem.managers.UserLevelManager;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.FileManager;
 import me.flame.galantic.utils.ScoreboardUtils;
@@ -38,6 +39,7 @@ public class JoinEventListener implements Listener {
         p.getInventory().setBoots(null);
 
         p.getInventory().setItem(0, new ItemBuilder(Material.ARMOR_STAND, 1).setDisplayName("&aKits").build());
+        p.getInventory().setItem(1, new ItemBuilder(Material.EMERALD, 1).setDisplayName("&aShop").build());
         p.getInventory().setItem(4, new ItemBuilder(Material.COMPASS, 1).setDisplayName("&a&lServer Selector").build());
         p.getInventory().setItem(7, new ItemBuilder(Material.CHEST, 1).setDisplayName("&aCosmetics").build());
         p.getInventory().setItem(8, new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setDisplayName("&aProfile").setSkullOwner(p.getName()).build());
@@ -46,6 +48,7 @@ public class JoinEventListener implements Listener {
         String[] loc = locatie.split(";");
         p.teleport(new Location(Bukkit.getServer().getWorld(loc[0]), Double.valueOf(loc[1]), Double.valueOf(loc[2]), Double.valueOf(loc[3]), Float.valueOf(loc[4]), Float.valueOf(loc[5])));
 
+        UserLevelManager.getInstance().setXPLevel(p.getUniqueId());
         scoreboardUtils.setScoreboard(p.getUniqueId());
     }
 

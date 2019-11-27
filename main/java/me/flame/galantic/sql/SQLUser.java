@@ -63,6 +63,10 @@ public class SQLUser {
         return level;
     }
 
+    public void setLevel(Integer level){
+        this.level = level;
+    }
+
     public double getXp() {
         return xp;
     }

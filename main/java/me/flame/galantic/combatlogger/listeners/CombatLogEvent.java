@@ -26,7 +26,6 @@ public class CombatLogEvent implements Listener {
         Player p = e.getPlayer();
 
         if(combatLoggerManager.hasActiveCombat(p)){
-            combatLoggerManager.removeCombat(p);
             combatLogged.add(p.getUniqueId());
 
             Player target = Bukkit.getServer().getPlayer(PvPEventListener.inFight.get(p.getUniqueId()));
@@ -38,6 +37,8 @@ public class CombatLogEvent implements Listener {
                     break;
                 }
             }
+
+            combatLoggerManager.removeCombat(p);
         }
     }
 

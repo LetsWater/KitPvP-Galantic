@@ -25,12 +25,12 @@ public class InventoryListener implements Listener {
             return;
         }
 
-        if(e.getSlotType() == InventoryType.SlotType.ARMOR){
+        if (e.getSlotType() == InventoryType.SlotType.ARMOR) {
             e.setCancelled(true);
         }
 
         Player p = (Player) e.getWhoClicked();
-        if (e.getClickedInventory().getName().contains(ChatUtils.format("&a&lStatistics &8»"))) {
+        if (e.getClickedInventory().getName().contains(ChatUtils.format("&a&lStats &8»"))) {
             e.setCancelled(true);
         }
 
@@ -39,19 +39,19 @@ public class InventoryListener implements Listener {
             if (e.getCurrentItem().getType() != Material.AIR) {
                 String kitName = e.getCurrentItem().getItemMeta().getDisplayName().replace("§9", "").replaceAll("§l", "").toLowerCase();
                 for (SQLUser user : SQLUserManager.userList) {
-                    //if (p.hasPermission("kitpvp.kit." + kitName) || kitName.equals("warrior")) {
-                        if (user.getUuid() == p.getUniqueId()) {
-                            user.setUsing_kit(kitName);
+                    //if (p.hasPermission("kitpvp.kit." + kitName) || kitName.equals("warrior")||kitName.equals("archer") || kitName.equals("tank") || kitName.equals("axe") || kitName.equals("ninja")){
+                    if (user.getUuid() == p.getUniqueId()) {
+                        user.setUsing_kit(kitName);
 
-                            p.sendMessage(kitName + " gekozen!");
-                            p.closeInventory();
-                            break;
-                        }
+                        p.sendMessage(kitName + " gekozen!");
+                        p.closeInventory();
+                        break;
+                    }
                     //} else {
                     //    p.sendMessage(ChatUtils.format("Geen permissions voor " + kitName));
                     //    p.closeInventory();
                     //    break;
-                    //}
+                    // }
                 }
             }
         }

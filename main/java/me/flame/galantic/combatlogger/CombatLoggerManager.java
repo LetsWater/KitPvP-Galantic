@@ -2,6 +2,7 @@ package me.flame.galantic.combatlogger;
 
 import me.flame.galantic.Core;
 import me.flame.galantic.combatlogger.interfaces.ICombatLoggerManager;
+import me.flame.galantic.listeners.PvPEventListener;
 import me.flame.galantic.utils.ChatUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -47,6 +48,8 @@ public class CombatLoggerManager implements ICombatLoggerManager {
             cooldownTask.get(p.getUniqueId()).cancel();
             cooldownTask.remove(p.getUniqueId());
             cooldownSeconds.remove(p.getUniqueId());
+
+            PvPEventListener.inFight.remove(p.getUniqueId());
         }
     }
 
