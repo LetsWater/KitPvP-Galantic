@@ -49,14 +49,20 @@ public class StatisticGUI {
                 StatsGUI.setItem(6, new ItemBuilder(Material.GOLD_NUGGET, 1)
                         .setDisplayName("&aCoins: &7" + user.getPvpCoins()).build());
 
+                Integer nextLevel = user.getLevel() + 1;
                 for (UserLevel userLevel : UserLevelManager.levelList) {
-                    Bukkit.broadcastMessage("" + user.getLevel());
-                    Bukkit.broadcastMessage("" + userLevel.getLevel());
-                    if (userLevel.getLevel() == user.getLevel() + 1) {
-                        Bukkit.broadcastMessage(""  + user.getLevel() + 1);
+                    if (userLevel.getLevel() == nextLevel) {
+                        Bukkit.broadcastMessage(""  + nextLevel);
                         StatsGUI.setItem(7, new ItemBuilder(Material.SIGN, 1)
                                 .setDisplayName("&aLevel Information")
                                 .setLore(false, " &fHuidig level &8» &7" + user.getLevel() + "/100", " &fXP &8» &7" + user.getXp() + "/" + userLevel.getXP()).build());
+                        break;
+                    }
+                    if (userLevel.getLevel() == 100){
+                        StatsGUI.setItem(7, new ItemBuilder(Material.SIGN, 1)
+                                .setDisplayName("&aLevel Information")
+                                .setLore(false, " &fHuidig level &8» &7" + user.getLevel() + "", " &fXP &8» &cMax Level").build());
+                        break;
                     }
                 }
                 break;
