@@ -4,6 +4,8 @@ import me.flame.galantic.commands.gui.KitSelectorGUI;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
+import me.galantic.galanticcore.api.CoreAPI;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -43,7 +45,7 @@ public class InventoryListener implements Listener {
                     if (user.getUuid() == p.getUniqueId()) {
                         user.setUsing_kit(kitName);
 
-                        p.sendMessage(kitName + " gekozen!");
+                        CoreAPI.getMessageManager().sendMessage( p, "kit_chosen", kitName );
                         p.closeInventory();
                         break;
                     }

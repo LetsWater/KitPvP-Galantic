@@ -3,6 +3,8 @@ package me.flame.galantic.commands;
 import me.flame.galantic.Core;
 import me.flame.galantic.utils.ChatUtils;
 import me.flame.galantic.utils.FileManager;
+import me.galantic.galanticcore.api.CoreAPI;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,12 +15,12 @@ public class SetSpawnCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender.hasPermission("kitpvp.setspawn"))) {
-            sender.sendMessage("Geen permissions voor setspawn");
+        	CoreAPI.getMessageManager().sendMessage( sender, "no_permission", "kitpvp.setspawn" );
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatUtils.format("&cKan alleen door speler worden uitgevoerd."));
+        	CoreAPI.getMessageManager().sendMessage( sender, "core_no_player_console" );
             return true;
         }
 
@@ -31,7 +33,7 @@ public class SetSpawnCommand implements CommandExecutor {
                 + ";" + p.getLocation().getPitch());
 
         FileManager.save(Core.getInstance(), "config.yml");
-        sender.sendMessage("Spawn gezet");
+        CoreAPI.getMessageManager().sendMessage( sender, "spawn_saved" );
 
 
         return false;
