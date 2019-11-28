@@ -4,9 +4,9 @@ import me.flame.galantic.Core;
 import me.flame.galantic.listeners.PvPEventListener;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.interfaces.ISQLUser;
-import me.flame.galantic.sql.levelSystem.UserLevel;
 import me.flame.galantic.sql.levelSystem.managers.UserLevelManager;
 import me.flame.galantic.utils.FileManager;
+import me.galantic.galanticcore.api.CoreAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -74,6 +74,7 @@ public class SQLUserManager implements ISQLUser {
                 registerUser(uuid);
             }
 
+            PvPEventListener.killstreak.put(p.getUniqueId(), 0);
             userData.close();
             userLevels.close();
 
@@ -116,6 +117,9 @@ public class SQLUserManager implements ISQLUser {
                 user.setXp(user.getXp() + FileManager.get("config.yml").getDouble("PvP-Settings.xp-per-kill"));
                 UserLevelManager.getInstance().levelUp(user.getUuid());
 
+                PvPEventListener.killstreak.replace(uuid, PvPEventListener.killstreak.get(uuid) + 1);
+                broadcastKillstreak(uuid,PvPEventListener.killstreak.get(uuid));
+
                 UserLevelManager.getInstance().setXPLevel(user.getUuid());
                 break;
             }
@@ -126,6 +130,10 @@ public class SQLUserManager implements ISQLUser {
         for (SQLUser user : SQLUserManager.userList) {
             if (user.getUuid() == uuid) {
                 user.setDeaths(user.getDeaths() + 1);
+                UUID killerUUID = PvPEventListener.inFight.get(uuid);
+
+                broadcastEndedKillstreak(uuid, killerUUID, PvPEventListener.killstreak.get(uuid));
+                PvPEventListener.killstreak.replace(uuid, 0);
 
                 if (user.getPvpCoins() - FileManager.get("config.yml").getDouble("PvP-Settings.coins-per-death") < 0) {
                     user.setPvpCoins(0);
@@ -136,6 +144,18 @@ public class SQLUserManager implements ISQLUser {
                 UserLevelManager.getInstance().setXPLevel(user.getUuid());
                 break;
             }
+        }
+    }
+
+    public void broadcastKillstreak(UUID uuid, Integer killStreak) {
+        if(killStreak % 5 == 0) {
+            Bukkit.getOnlinePlayers().forEach(target -> CoreAPI.getMessageManager().sendMessage(target, "killsteak", Bukkit.getServer().getPlayer(uuid).getName(), killStreak));
+        }
+    }
+
+    public void broadcastEndedKillstreak(UUID uuid, UUID killerUuid, Integer killStreak){
+        if(killStreak >= 5){
+            Bukkit.getOnlinePlayers().forEach(target -> CoreAPI.getMessageManager().sendMessage(target, "ended_killsteak", Bukkit.getServer().getPlayer(uuid).getName(), Bukkit.getServer().getPlayer(killerUuid).getName() , killStreak));
         }
     }
 

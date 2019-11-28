@@ -45,14 +45,13 @@ public class JoinEventListener implements Listener {
         p.getInventory().setItem(7, new ItemBuilder(Material.CHEST, 1).setDisplayName("&aCosmetics").build());
         p.getInventory().setItem(8, new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setDisplayName("&aProfile").setSkullOwner(p.getName()).build());
 
-        CoreAPI.getUserManager().getUser(p.getUniqueId()).setTabList();
-
         String locatie = FileManager.get("config.yml").getString("spawn.locatie");
         String[] loc = locatie.split(";");
         p.teleport(new Location(Bukkit.getServer().getWorld(loc[0]), Double.valueOf(loc[1]), Double.valueOf(loc[2]), Double.valueOf(loc[3]), Float.valueOf(loc[4]), Float.valueOf(loc[5])));
 
         UserLevelManager.getInstance().setXPLevel(p.getUniqueId());
         scoreboardUtils.setScoreboard(p.getUniqueId());
+        CoreAPI.getUserManager().getUser(p.getUniqueId()).setTabList();
     }
 
     @EventHandler
