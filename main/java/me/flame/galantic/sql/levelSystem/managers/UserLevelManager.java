@@ -34,8 +34,6 @@ public class UserLevelManager {
                 levelList.add(userLevel);
             }
 
-            if (resultSet.next()) {
-            }
             levelData.close();
         } catch (SQLException e) {
             e.printStackTrace();

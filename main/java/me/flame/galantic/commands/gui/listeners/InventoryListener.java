@@ -51,6 +51,7 @@ public class InventoryListener implements Listener {
                         }
                     } else {
                         p.sendMessage(ChatUtils.format("Geen permissions voor " + kitName));
+                        CoreAPI.getMessageManager().sendMessage(p, "kit_chosen", kitName);
                         p.closeInventory();
                         break;
                     }
@@ -74,6 +75,11 @@ public class InventoryListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
                 if (e.getItem().getType() == Material.ARMOR_STAND) {
                     kitSelectorGUI.kitSelector(p.getUniqueId());
+                }
+            }
+            if(e.getAction() == Action.RIGHT_CLICK_BLOCK){
+                if(e.getClickedBlock().getType().equals(Material.CHEST)){
+                    e.setCancelled(true);
                 }
             }
         }
