@@ -14,9 +14,11 @@ public class PlayerToggleFlightListener implements Listener {
 	@EventHandler
 	public void on( PlayerToggleFlightEvent e ) {
 		Player target = e.getTarget();
+		if ( target.hasPermission( "kitpvp.staff" ) )
+			return;
 		String locatie = FileManager.get( "config.yml" ).getString( "spawn.locatie" );
 		String[] loc = locatie.split( ";" );
-		if ( target.getLocation().getY() <= Double.parseDouble( loc[ 2 ] ) - 3
+		if ( target.getLocation().getY() < Double.parseDouble( loc[ 2 ] )
 				&& target.getGameMode() == GameMode.ADVENTURE ) {
 			e.setCancelled( true );
 			CoreAPI.getMessageManager().sendMessage( e.getExecutor() == null ? target : e.getExecutor(),

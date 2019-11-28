@@ -18,6 +18,7 @@ import me.flame.galantic.commands.StatisticsCommand;
 import me.flame.galantic.commands.gui.listeners.InventoryListener;
 import me.flame.galantic.listeners.JoinEventListener;
 import me.flame.galantic.listeners.MoveEvent;
+import me.flame.galantic.listeners.PlayerToggleFlightListener;
 import me.flame.galantic.listeners.PvPEventListener;
 import me.flame.galantic.sql.levelSystem.managers.UserLevelManager;
 import me.flame.galantic.sql.listeners.UserListener;
@@ -85,6 +86,7 @@ public final class Core extends JavaPlugin implements Listener {
 		pm.registerEvents( new PvPEventListener(), this );
 		pm.registerEvents( new MoveEvent(), this );
 		pm.registerEvents( new CombatLogEvent(), this );
+		pm.registerEvents( new PlayerToggleFlightListener(), this );
 	}
 
 	private void registerCommands() {
@@ -114,7 +116,8 @@ public final class Core extends JavaPlugin implements Listener {
 	private void loadMessages() {
 		for ( String key : Arrays.asList( "kit_chosen", "spawn_saved", "wrong_usage_spawn", "spawn_teleport",
 				"spawn_teleport_target", "spawn_teleport_from", "opening_menu", "openung_menu_target", "kit_received",
-				"death_killed_by", "killed_player", "death_void", "level_up", "killstreak", "ended_killstreak", "fly_cannot_enable" ) ) {
+				"death_killed_by", "killed_player", "death_void", "level_up", "killstreak", "ended_killstreak",
+				"fly_cannot_enable" ) ) {
 			CoreAPI.getMessageManager().addMessage( key,
 					LanguageCombiner.builder().addMessage( Language.DUTCH, "Key: " + key )
 							.addMessage( Language.ENGLISH, "Key: " + key ).build() );
