@@ -77,11 +77,6 @@ public class InventoryListener implements Listener {
                     kitSelectorGUI.kitSelector(p.getUniqueId());
                 }
             }
-            if(e.getAction() == Action.RIGHT_CLICK_BLOCK){
-                if(e.getClickedBlock().getType().equals(Material.CHEST)){
-                    e.setCancelled(true);
-                }
-            }
         }
     }
 

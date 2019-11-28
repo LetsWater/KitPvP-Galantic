@@ -112,9 +112,9 @@ public final class Core extends JavaPlugin implements Listener {
 	}
 
 	private void loadMessages() {
-		for ( String key : Arrays.asList( "kit_chosen", "spawn_saved", "wrong_usage_spawn", "spawn_teleport",
+		for ( String key : Arrays.asList( "combat_enabled", "combat_no_active", "combat_disabled", "combat_activated", "kit_chosen", "spawn_saved", "wrong_usage_spawn", "spawn_teleport",
 				"spawn_teleport_target", "spawn_teleport_from", "opening_menu", "openung_menu_target", "kit_received",
-				"death_killed_by", "killed_player", "death_void", "level_up" , "killstreak", "ended_killstreak") ) {
+				"death_killed_by", "killed_player", "death_void", "level_up" , "killstreak", "ended_killstreak", "fly_cannot_enable" ) ) {
 			CoreAPI.getMessageManager().addMessage( key,
 					LanguageCombiner.builder().addMessage( Language.DUTCH, "Key: " + key )
 							.addMessage( Language.ENGLISH, "Key: " + key ).build() );

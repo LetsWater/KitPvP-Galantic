@@ -149,13 +149,13 @@ public class SQLUserManager implements ISQLUser {
 
     public void broadcastKillstreak(UUID uuid, Integer killStreak) {
         if(killStreak % 5 == 0) {
-            Bukkit.getOnlinePlayers().forEach(target -> CoreAPI.getMessageManager().sendMessage(target, "killsteak", Bukkit.getServer().getPlayer(uuid).getName(), killStreak));
+            Bukkit.getOnlinePlayers().forEach(target -> CoreAPI.getMessageManager().sendMessage(target, "killstreak", Bukkit.getServer().getPlayer(uuid).getName(), killStreak));
         }
     }
 
     public void broadcastEndedKillstreak(UUID uuid, UUID killerUuid, Integer killStreak){
         if(killStreak >= 5){
-            Bukkit.getOnlinePlayers().forEach(target -> CoreAPI.getMessageManager().sendMessage(target, "ended_killsteak", Bukkit.getServer().getPlayer(uuid).getName(), Bukkit.getServer().getPlayer(killerUuid).getName() , killStreak));
+            Bukkit.getOnlinePlayers().forEach(target -> CoreAPI.getMessageManager().sendMessage(target, "ended_killstreak", Bukkit.getServer().getPlayer(uuid).getName(), Bukkit.getServer().getPlayer(killerUuid).getName() , killStreak));
         }
     }
 
