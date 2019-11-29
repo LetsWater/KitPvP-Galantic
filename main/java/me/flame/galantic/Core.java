@@ -156,7 +156,9 @@ public final class Core extends JavaPlugin implements Listener {
                 "gui_player_profile_language_lore", "gui_player_profile_language_english_displayname",
                 "gui_player_profile_language_english_lore", "gui_player_profile_language_netherlands_displayname",
                 "gui_player_profile_language_netherlands_lore", "gui_player_profile_title",
-                "gui_serverselector_title", "no_kit_permission")) {
+                "gui_serverselector_title", "no_kit_permission", "warrior_kit_lore", "archer_kit_lore", "tank_kit_lore"
+                , "axe_kit_lore", "ninja_kit_lore", "vip_kit_lore", "elite_kit_lore", "hero_kit_lore"
+                , "god_kit_lore", "custom_kit_lore")) {
             CoreAPI.getMessageManager().addMessage(key,
                     LanguageCombiner.builder().addMessage(Language.DUTCH, "Key: " + key)
                             .addMessage(Language.ENGLISH, "Key: " + key).build());

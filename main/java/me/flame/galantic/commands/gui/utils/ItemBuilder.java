@@ -102,4 +102,19 @@ public class ItemBuilder {
     public ItemStack build() {
         return itemStack;
     }
+
+    public ItemBuilder setLore(boolean b, List<String> itemLore) {
+        ItemMeta meta = itemStack.getItemMeta();
+        List<String> lore = new ArrayList();
+
+        for (String lores : itemLore) {
+            lore.add(ChatUtils.format(lores));
+
+        }
+
+
+        meta.setLore(lore);
+        itemStack.setItemMeta(meta);
+        return this;
+    }
 }

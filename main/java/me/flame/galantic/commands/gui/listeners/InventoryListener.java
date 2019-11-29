@@ -89,6 +89,10 @@ public class InventoryListener implements Listener {
                 if(e.getItem().getType() == Material.SKULL_ITEM){
                     GUI.PLAYER_PROFILE.openInventory(p);
                 }
+
+                if(e.getItem().getType() == Material.EMERALD || e.getItem().getType() == Material.CHEST){
+                    p.sendMessage(ChatUtils.format("&cComing soon"));
+                }
             }
         }
     }

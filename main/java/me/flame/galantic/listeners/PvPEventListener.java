@@ -55,11 +55,11 @@ public class PvPEventListener implements Listener {
 
                 combatLoggerManager.removeCombat(e.getEntity());
 
-				e.getEntity().spigot().respawn();
+                e.getEntity().spigot().respawn();
                 return;
             } else {
                 CoreAPI.getMessageManager().sendMessage(e.getEntity(), "death_void");
-				SQLUserManager.getInstance().removeRewards(e.getEntity().getUniqueId());
+                SQLUserManager.getInstance().removeRewards(e.getEntity().getUniqueId());
             }
         }
 
@@ -73,7 +73,7 @@ public class PvPEventListener implements Listener {
                 // Rewards
                 SQLUserManager.getInstance().removeRewards(p.getUniqueId());
 
-				p.spigot().respawn();
+                p.spigot().respawn();
                 break;
             }
         }
