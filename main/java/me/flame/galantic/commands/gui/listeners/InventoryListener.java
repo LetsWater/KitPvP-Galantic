@@ -4,8 +4,10 @@ import me.flame.galantic.commands.gui.KitSelectorGUI;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
+import me.flame.galantic.utils.GUI;
 import me.galantic.galanticcore.api.CoreAPI;
 
+import me.galanticmc.hub.HubInventory;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,7 +41,7 @@ public class InventoryListener implements Listener {
         if (e.getClickedInventory().getName().contains(ChatUtils.format("&9Kit Selector"))) {
             e.setCancelled(true);
             if (e.getCurrentItem().getType() != Material.AIR) {
-                String kitName = e.getCurrentItem().getItemMeta().getDisplayName().replace("§9", "").replaceAll("§l", "").toLowerCase();
+                String kitName = e.getCurrentItem().getItemMeta().getDisplayName().replace("§b", "").replaceAll("§l", "").toLowerCase();
                 for (SQLUser user : SQLUserManager.userList) {
                     if (p.hasPermission("kitpvp.kit." + kitName) || kitName.equals("warrior") || kitName.equals("archer") || kitName.equals("tank") || kitName.equals("axe") || kitName.equals("ninja")) {
                         if (user.getUuid() == p.getUniqueId()) {
@@ -50,8 +52,7 @@ public class InventoryListener implements Listener {
                             break;
                         }
                     } else {
-                        p.sendMessage(ChatUtils.format("Geen permissions voor " + kitName));
-                        CoreAPI.getMessageManager().sendMessage(p, "kit_chosen", kitName);
+                        CoreAPI.getMessageManager().sendMessage(p, "no_kit_permission", kitName);
                         p.closeInventory();
                         break;
                     }
@@ -64,6 +65,10 @@ public class InventoryListener implements Listener {
                 e.setCancelled(true);
             }
         }
+
+        if(p.getGameMode() == GameMode.ADVENTURE && p.getInventory().getHelmet() == null){
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -75,6 +80,14 @@ public class InventoryListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
                 if (e.getItem().getType() == Material.ARMOR_STAND) {
                     kitSelectorGUI.kitSelector(p.getUniqueId());
+                }
+
+                if(e.getItem().getType() == Material.COMPASS){
+                    GUI.SERVER_SELECTOR.openInventory(p);
+                }
+
+                if(e.getItem().getType() == Material.SKULL_ITEM){
+                    GUI.PLAYER_PROFILE.openInventory(p);
                 }
             }
         }

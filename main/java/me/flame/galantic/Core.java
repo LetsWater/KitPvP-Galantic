@@ -2,6 +2,9 @@ package me.flame.galantic;
 
 import java.util.Arrays;
 
+import me.flame.galantic.listeners.PlayerToggleFlightListener;
+import me.flame.galantic.utils.GUI;
+import me.galantic.galanticcore.api.BungeecordAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -31,93 +34,132 @@ import me.galantic.galanticcore.api.CoreAPI;
 
 public final class Core extends JavaPlugin implements Listener {
 
-	private static Core instance;
-	public static HikariDataSource hikari;
-	private static SQLManager sqlManager;
-	private static UserLevelManager userLevelManager = new UserLevelManager();
-	private final SQLUserManager sqlUserManager = new SQLUserManager();
-	private final ScoreboardUtils scoreboardUtils = new ScoreboardUtils();
+    private static Core instance;
+    public static HikariDataSource hikari;
+    private static SQLManager sqlManager;
+    private static UserLevelManager userLevelManager = new UserLevelManager();
+    private final SQLUserManager sqlUserManager = new SQLUserManager();
+    private final ScoreboardUtils scoreboardUtils = new ScoreboardUtils();
 
-	public static Core getInstance() {
-		return instance;
-	}
+    public static Core getInstance() {
+        return instance;
+    }
 
-	@Override
-	public void onEnable() {
-		FileManager.load( this, "config.yml" );
+    @Override
+    public void onEnable() {
+        FileManager.load(this, "config.yml");
 
-		instance = this;
-		sqlManager = new SQLManager();
-		getLogger().info( "KitPvP has been enabled!" );
+        GUI.loadInventories();
 
-		registerListeners();
-		registerCommands();
+        instance = this;
+        sqlManager = new SQLManager();
+        getLogger().info("KitPvP has been enabled!");
 
-		connect();
-		sqlManager.createTables();
-		userLevelManager.loadLevels();
+        registerListeners();
+        registerCommands();
 
-		for ( Player online : Bukkit.getServer().getOnlinePlayers() ) {
-			sqlUserManager.loadUser( online.getUniqueId() );
-			scoreboardUtils.setScoreboard( online.getUniqueId() );
-		}
-		loadMessages();
-	}
+        connect();
+        sqlManager.createTables();
+        userLevelManager.loadLevels();
 
-	@Override
-	public void onDisable() {
-		instance = null;
-		for ( Player online : Bukkit.getServer().getOnlinePlayers() ) {
-			SQLUserManager.getInstance().saveUser( online.getUniqueId() );
-		}
+        for (Player online : Bukkit.getServer().getOnlinePlayers()) {
+            sqlUserManager.loadUser(online.getUniqueId());
+            scoreboardUtils.setScoreboard(online.getUniqueId());
+        }
+        loadMessages();
+    }
 
-		if ( hikari != null ) {
-			hikari.close();
-		}
-	}
+    @Override
+    public void onDisable() {
+        instance = null;
+        for (Player online : Bukkit.getServer().getOnlinePlayers()) {
+            SQLUserManager.getInstance().saveUser(online.getUniqueId());
+            BungeecordAPI.sendPlayer(online.getName(), "hub1");
+        }
 
-	private void registerListeners() {
-		PluginManager pm = Bukkit.getServer().getPluginManager();
-		pm.registerEvents( this, this );
-		pm.registerEvents( new UserListener(), this );
-		pm.registerEvents( new InventoryListener(), this );
-		pm.registerEvents( new JoinEventListener(), this );
-		pm.registerEvents( new PvPEventListener(), this );
-		pm.registerEvents( new MoveEvent(), this );
-		pm.registerEvents( new CombatLogEvent(), this );
-	}
+        if (hikari != null) {
+            hikari.close();
+        }
 
-	private void registerCommands() {
-		getCommand( "stats" ).setExecutor( new StatisticsCommand() );
-		getCommand( "setspawn" ).setExecutor( new SetSpawnCommand() );
-		getCommand( "spawn" ).setExecutor( new SpawnCommand() );
-		getCommand( "combatlog" ).setExecutor( new CombatLogCommand() );
-	}
+    }
 
-	private void connect() {
-		hikari = new HikariDataSource();
-		hikari.setDataSourceClassName( "com.mysql.jdbc.jdbc2.optional.MysqlDataSource" );
+    private void registerListeners() {
+        PluginManager pm = Bukkit.getServer().getPluginManager();
+        pm.registerEvents(this, this);
+        pm.registerEvents(new UserListener(), this);
+        pm.registerEvents(new InventoryListener(), this);
+        pm.registerEvents(new JoinEventListener(), this);
+        pm.registerEvents(new PvPEventListener(), this);
+        pm.registerEvents(new MoveEvent(), this);
+        pm.registerEvents(new CombatLogEvent(), this);
+        pm.registerEvents(new PlayerToggleFlightListener(), this);
+    }
 
-		String hostName = FileManager.get( "config.yml" ).getString( "database.host" );
-		String[] hostNameAndPort = hostName.split( ":" );
-		String databaseName = FileManager.get( "config.yml" ).getString( "database.databasename" );
-		String databasePassword = FileManager.get( "config.yml" ).getString( "database.password" );
-		String databaseUser = FileManager.get( "config.yml" ).getString( "database.username" );
+    private void registerCommands() {
+        getCommand("stats").setExecutor(new StatisticsCommand());
+        getCommand("setspawn").setExecutor(new SetSpawnCommand());
+        getCommand("spawn").setExecutor(new SpawnCommand());
+        getCommand("combatlog").setExecutor(new CombatLogCommand());
+    }
 
-		hikari.addDataSourceProperty( "serverName", hostNameAndPort[ 0 ] );
-		hikari.addDataSourceProperty( "port", hostNameAndPort[ 1 ] );
-		hikari.addDataSourceProperty( "databaseName", databaseName );
-		hikari.addDataSourceProperty( "user", databaseUser );
-		hikari.addDataSourceProperty( "password", databasePassword );
-	}
+    private void connect() {
+        hikari = new HikariDataSource();
+        hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
 
-	private void loadMessages() {
-		for ( String key : Arrays.asList( "combat_enabled", "combat_no_active", "combat_disabled", "combat_activated", "kit_chosen", "spawn_saved", "wrong_usage_spawn", "spawn_teleport",
-				"spawn_teleport_target", "spawn_teleport_from", "opening_menu", "openung_menu_target", "kit_received",
-				"death_killed_by", "killed_player", "death_void", "level_up" , "killstreak", "ended_killstreak", "fly_cannot_enable" ) ) {
-			CoreAPI.getMessageManager().addMessage( key,
-					LanguageCombiner.builder().addMessage( Language.DUTCH, "Key: " + key )
-							.addMessage( Language.ENGLISH, "Key: " + key ).build() );
-		}
-	}
+        String hostName = FileManager.get("config.yml").getString("database.host");
+        String[] hostNameAndPort = hostName.split(":");
+        String databaseName = FileManager.get("config.yml").getString("database.databasename");
+        String databasePassword = FileManager.get("config.yml").getString("database.password");
+        String databaseUser = FileManager.get("config.yml").getString("database.username");
+
+        hikari.addDataSourceProperty("serverName", hostNameAndPort[0]);
+        hikari.addDataSourceProperty("port", hostNameAndPort[1]);
+        hikari.addDataSourceProperty("databaseName", databaseName);
+        hikari.addDataSourceProperty("user", databaseUser);
+        hikari.addDataSourceProperty("password", databasePassword);
+    }
+
+    private void loadMessages() {
+        for (String key : Arrays.asList("combat_enabled", "combat_no_active", "combat_disabled", "combat_activated", "kit_chosen", "spawn_saved", "wrong_usage_spawn", "spawn_teleport",
+                "spawn_teleport_target", "spawn_teleport_from", "opening_menu", "opening_menu_target", "kit_received",
+                "death_killed_by", "killed_player", "death_void", "level_up", "killstreak", "ended_killstreak", "fly_cannot_enable", "combat_logged_welcome_back", "gui_player_profile_settings_displayname",
+                "gui_player_profile_settings_lore", "gui_settings_title", "gui_arrow_back_lore",
+                "gui_arrow_back_displayname", "coming_soon",
+                "gui_settings_clock_true_displayname", "gui_settings_clock_false_displayname",
+                "gui_settings_clock_true_lore", "gui_settings_clock_false_lore",
+                "gui_settings_clock_dye_true_displayname", "gui_settings_clock_dye_false_displayname",
+                "gui_settings_clock_dye_true_lore", "gui_settings_clock_dye_false_lore",
+                "gui_settings_chat_true_displayname", "gui_settings_chat_false_displayname",
+                "gui_settings_chat_true_lore", "gui_settings_chat_false_lore", "gui_settings_chat_dye_true_displayname",
+                "gui_settings_chat_dye_false_displayname", "gui_settings_chat_dye_true_lore",
+                "gui_settings_chat_dye_false_lore", "gui_settings_pm_true_displayname",
+                "gui_settings_pm_false_displayname", "gui_settings_pm_true_lore", "gui_settings_pm_false_lore",
+                "gui_settings_pm_dye_true_displayname", "gui_settings_pm_dye_false_displayname",
+                "gui_settings_pm_dye_true_lore", "gui_settings_pm_dye_false_lore", "gui_settings_fly_true_displayname",
+                "gui_settings_fly_false_displayname", "gui_settings_fly_true_lore", "gui_settings_fly_false_lore",
+                "gui_settings_fly_dye_true_displayname", "gui_settings_fly_dye_false_displayname",
+                "gui_settings_fly_dye_true_lore", "gui_settings_fly_dye_false_lore", "gui_settings_fly_no_perm_lore",
+                "gui_settings_fly_no_perm_displayname", "gui_settings_fly_dye_no_perm_lore",
+                "gui_settings_fly_dye_no_perm_displayname", "gui_settings_friends_displayname",
+                "gui_settings_friends_lore", "gui_settings_friends_dye_displayname", "gui_settings_friends_dye_lore",
+                "pm_disabled_sender", "pm_disabled_target", "youtube", "discord", "website", "twitter", "store",
+                "gui_serverselector_hub_displayname", "gui_serverselector_hub_lore",
+                "gui_serverselector_build_displayname", "gui_serverselector_build_lore",
+                "gui_serverselector_dev03_displayname", "gui_serverselector_dev03_lore",
+                "gui_serverselector_dev02_displayname", "gui_serverselector_dev02_lore",
+                "gui_serverselector_dev01_displayname", "gui_serverselector_dev01_lore",
+                "gui_serverselector_oitc_displayname", "gui_serverselector_oitc_lore",
+                "gui_serverselector_kitpvp_displayname", "gui_serverselector_kitpvp_lore",
+                "gui_serverselector_event_displayname", "gui_serverselector_event_lore",
+                "inventory_player_selector_displayname", "inventory_server_selector_displayname",
+                "inventory_player_profile_displayname", "gui_player_profile_language_displayname",
+                "gui_player_profile_language_lore", "gui_player_profile_language_english_displayname",
+                "gui_player_profile_language_english_lore", "gui_player_profile_language_netherlands_displayname",
+                "gui_player_profile_language_netherlands_lore", "gui_player_profile_title",
+                "gui_serverselector_title", "no_kit_permission")) {
+            CoreAPI.getMessageManager().addMessage(key,
+                    LanguageCombiner.builder().addMessage(Language.DUTCH, "Key: " + key)
+                            .addMessage(Language.ENGLISH, "Key: " + key).build());
+        }
+    }
 }

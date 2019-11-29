@@ -34,8 +34,9 @@ public class CombatLogEvent implements Listener {
 			CoreAPI.getMessageManager().sendMessage( target, "combat_logged", p.getName() );
 			for ( SQLUser user : SQLUserManager.userList ) {
 				if ( user.getUuid() == target.getUniqueId() ) {
-					user.setKills( user.getKills() + 1 );
-					user.setPvpCoins( user.getPvpCoins() + 0.5 );
+
+					SQLUserManager.getInstance().addRewards(user.getUuid());
+
 					break;
 				}
 			}
