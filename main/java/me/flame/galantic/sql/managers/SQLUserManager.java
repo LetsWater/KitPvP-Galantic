@@ -32,7 +32,7 @@ public class SQLUserManager implements ISQLUser {
             ResultSet result = insert.executeQuery();
 
             if (!result.next()) {
-                insert.executeUpdate("INSERT INTO `user_data` (`uuid`, `name`, `using_kit`, `pvp_coins`, `kills`, `deaths`, `best_streak`)  VALUE ('" + uuid + "', '" + p.getName() + "', 'warrior' , '0', '0', '0', '0');");
+                insert.executeUpdate("INSERT INTO `user_data` (`uuid`, `name`, `using_kit`, `pvp_coins`, `kills`, `deaths`, `best_streak`, `warrior_level`, `archer_level`, `tank_level`, `axe_level`, `ninja_level`, `vip_level`, `elite_level`, `hero_level`, `god_level`, `custom_level`)  VALUE ('" + uuid + "', '" + p.getName() + "', 'warrior' , '0', '0', '0', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1');");
                 insert.executeUpdate("INSERT INTO `user_levels` (`uuid`, `name`, `level`, `xp`) VALUE ('" + uuid + "', '" + p.getName() + "', '1', '0');");
             }
         } catch (SQLException e) {
@@ -65,7 +65,19 @@ public class SQLUserManager implements ISQLUser {
                 Integer level = resultLevels.getInt("level");
                 Integer xp = resultLevels.getInt("xp");
 
-                user = new SQLUser(name, uuid, using_kit, pvpCoins, kills, deaths, bestStreak, level, xp);
+                Integer warrior_level = resultData.getInt("warrior_level");
+                Integer archer_level = resultData.getInt("warrior_level");
+                Integer tank_level = resultData.getInt("warrior_level");
+                Integer axe_level = resultData.getInt("warrior_level");
+                Integer ninja_level = resultData.getInt("warrior_level");
+
+                Integer vip_level = resultData.getInt("warrior_level");
+                Integer elite_level = resultData.getInt("warrior_level");
+                Integer hero_level = resultData.getInt("warrior_level");
+                Integer god_level = resultData.getInt("warrior_level");
+                Integer custom_level = resultData.getInt("warrior_level");
+
+                user = new SQLUser(name, uuid, using_kit, pvpCoins, kills, deaths, bestStreak, level, xp, warrior_level, archer_level, tank_level, axe_level, ninja_level, vip_level, elite_level, hero_level, god_level, custom_level);
                 userList.add(user);
 
                 PvPEventListener.killstreak.put(uuid, 0);
@@ -96,6 +108,18 @@ public class SQLUserManager implements ISQLUser {
                     userData.executeUpdate("UPDATE `user_data` set `kills` = '" + user.getKills() + "' WHERE uuid = '" + uuid + "';");
                     userData.executeUpdate("UPDATE `user_data` set `deaths` = '" + user.getDeaths() + "' WHERE uuid = '" + uuid + "';");
                     userData.executeUpdate("UPDATE `user_data` set `best_streak` = '" + user.getBestStreak() + "' WHERE uuid = '" + uuid + "';");
+
+                    userData.executeUpdate("UPDATE `user_data` set `warrior_level` = '" + user.getWarrior_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `archer_level` = '" + user.getArcher_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `tank_level` = '" + user.getTank_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `axe_level` = '" + user.getAxe_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `ninja_level` = '" + user.getNinja_level() + "' WHERE uuid = '" + uuid + "';");
+
+                    userData.executeUpdate("UPDATE `user_data` set `vip_level` = '" + user.getVip_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `elite_level` = '" + user.getElite_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `hero_level` = '" + user.getHero_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `god_level` = '" + user.getGod_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `custom_level` = '" + user.getCustom_level() + "' WHERE uuid = '" + uuid + "';");
 
                     userLevels.executeUpdate("UPDATE `user_levels` set `level` = '" + user.getLevel() + "' WHERE uuid = '" + uuid + "';");
                     userLevels.executeUpdate("UPDATE `user_levels` set `xp` = '" + user.getXp() + "' WHERE uuid = '" + uuid + "';");

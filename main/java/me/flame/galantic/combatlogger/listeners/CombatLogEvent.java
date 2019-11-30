@@ -54,13 +54,11 @@ public class CombatLogEvent implements Listener {
 			for ( SQLUser user : SQLUserManager.userList ) {
 				if ( user.getUuid() == p.getUniqueId() ) {
 					user.setDeaths( user.getDeaths() + 2 );
-					if ( user.getPvpCoins()
-							- FileManager.get( "config.yml" ).getInt( "PvP-Settings.coins-per-combatlog" ) < 0 ) {
+					if ( user.getPvpCoins() - FileManager.get( "config.yml" ).getInt( "PvP-Settings.coins-per-combatlog" ) < 0 ) {
 						user.setPvpCoins( 0 );
 						break;
 					}
-					user.setPvpCoins( user.getPvpCoins()
-							- FileManager.get( "config.yml" ).getInt( "PvP-Settings.coins-per-combatlog" ) );
+					user.setPvpCoins( user.getPvpCoins() - FileManager.get( "config.yml" ).getInt( "PvP-Settings.coins-per-combatlog" ) );
 					break;
 				}
 			}

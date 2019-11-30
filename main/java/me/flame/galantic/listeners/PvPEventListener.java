@@ -63,35 +63,35 @@ public class PvPEventListener implements Listener {
             }
         }
 
-        Player p = e.getEntity();
-        for (SQLUser sqlUser : SQLUserManager.userList) {
-            if (sqlUser.getUuid() == p.getUniqueId()) {
-                // Message
-                CoreAPI.getMessageManager().sendMessage(e.getEntity(), "death_killed_by",
-                        e.getEntity().getKiller().getName());
+        if (e.getEntity().getKiller() != null) {
+            Player p = e.getEntity();
+            for (SQLUser sqlUser : SQLUserManager.userList) {
+                if (sqlUser.getUuid() == p.getUniqueId()) {
+                    // Message
+                    CoreAPI.getMessageManager().sendMessage(e.getEntity(), "death_killed_by", p.getKiller().getName());
 
-                // Rewards
-                SQLUserManager.getInstance().removeRewards(p.getUniqueId());
+                    // Rewards
+                    SQLUserManager.getInstance().removeRewards(p.getUniqueId());
 
-                p.spigot().respawn();
-                break;
+                    p.spigot().respawn();
+                    break;
+                }
+            }
+
+            Player killer = e.getEntity().getKiller();
+            for (SQLUser user : SQLUserManager.userList) {
+                if (user.getUuid() == killer.getUniqueId()) {
+                    // Message
+                    CoreAPI.getMessageManager().sendMessage(killer, "killed_player", p.getName());
+
+                    // Rewards
+                    SQLUserManager.getInstance().addRewards(killer.getUniqueId());
+
+                    // Remove from fight
+                    break;
+                }
             }
         }
-
-        Player killer = e.getEntity().getKiller();
-        for (SQLUser user : SQLUserManager.userList) {
-            if (user.getUuid() == killer.getUniqueId()) {
-                // Message
-                CoreAPI.getMessageManager().sendMessage(killer, "killed_player", p.getName());
-
-                // Rewards
-                SQLUserManager.getInstance().addRewards(killer.getUniqueId());
-
-                // Remove from fight
-                break;
-            }
-        }
-
     }
 
     @EventHandler
@@ -141,7 +141,9 @@ public class PvPEventListener implements Listener {
         }
 
         if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
-            p.setHealth(0);
+            if (!p.isDead()) {
+                p.setHealth(0);
+            }
             p.spigot().respawn();
         }
     }

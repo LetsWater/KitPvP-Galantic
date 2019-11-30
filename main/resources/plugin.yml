@@ -1,4 +1,4 @@
-name: KitPvP
+name: Galantic-KitPvP
 version: ${project.version}
 main: me.flame.galantic.Core
 prefix: KitPvP

@@ -90,7 +90,7 @@ public class InventoryListener implements Listener {
                     GUI.PLAYER_PROFILE.openInventory(p);
                 }
 
-                if(e.getItem().getType() == Material.EMERALD || e.getItem().getType() == Material.CHEST){
+                if(e.getItem().getType() == Material.CHEST){
                     p.sendMessage(ChatUtils.format("&cComing soon"));
                 }
             }

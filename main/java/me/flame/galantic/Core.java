@@ -2,6 +2,8 @@ package me.flame.galantic;
 
 import java.util.Arrays;
 
+import me.flame.galantic.kits.upgradeKits.listeners.GUIInventoryListener;
+import me.flame.galantic.kits.upgradeKits.managers.UpgradeManager;
 import me.flame.galantic.listeners.PlayerToggleFlightListener;
 import me.flame.galantic.utils.GUI;
 import me.galantic.galanticcore.api.BungeecordAPI;
@@ -40,6 +42,7 @@ public final class Core extends JavaPlugin implements Listener {
     private static UserLevelManager userLevelManager = new UserLevelManager();
     private final SQLUserManager sqlUserManager = new SQLUserManager();
     private final ScoreboardUtils scoreboardUtils = new ScoreboardUtils();
+    private final UpgradeManager upgradeManager = new UpgradeManager();
 
     public static Core getInstance() {
         return instance;
@@ -67,6 +70,7 @@ public final class Core extends JavaPlugin implements Listener {
             scoreboardUtils.setScoreboard(online.getUniqueId());
         }
         loadMessages();
+        upgradeManager.loadUpgrades();
     }
 
     @Override
@@ -74,7 +78,6 @@ public final class Core extends JavaPlugin implements Listener {
         instance = null;
         for (Player online : Bukkit.getServer().getOnlinePlayers()) {
             SQLUserManager.getInstance().saveUser(online.getUniqueId());
-            BungeecordAPI.sendPlayer(online.getName(), "hub1");
         }
 
         if (hikari != null) {
@@ -93,6 +96,7 @@ public final class Core extends JavaPlugin implements Listener {
         pm.registerEvents(new MoveEvent(), this);
         pm.registerEvents(new CombatLogEvent(), this);
         pm.registerEvents(new PlayerToggleFlightListener(), this);
+        pm.registerEvents(new GUIInventoryListener(), this);
     }
 
     private void registerCommands() {
@@ -158,7 +162,7 @@ public final class Core extends JavaPlugin implements Listener {
                 "gui_player_profile_language_netherlands_lore", "gui_player_profile_title",
                 "gui_serverselector_title", "no_kit_permission", "warrior_kit_lore", "archer_kit_lore", "tank_kit_lore"
                 , "axe_kit_lore", "ninja_kit_lore", "vip_kit_lore", "elite_kit_lore", "hero_kit_lore"
-                , "god_kit_lore", "custom_kit_lore")) {
+                , "god_kit_lore", "custom_kit_lore", "warrior_upgrade_lore")) {
             CoreAPI.getMessageManager().addMessage(key,
                     LanguageCombiner.builder().addMessage(Language.DUTCH, "Key: " + key)
                             .addMessage(Language.ENGLISH, "Key: " + key).build());

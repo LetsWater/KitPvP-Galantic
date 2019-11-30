@@ -32,18 +32,13 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setLore(boolean rank, String... itemLore) {
+    public ItemBuilder setLore(String... itemLore) {
         ItemMeta meta = itemStack.getItemMeta();
         List<String> lore = new ArrayList();
 
         for (String lores : itemLore) {
             lore.add(ChatUtils.format(lores));
 
-        }
-
-        if (rank == true) {
-            lore.add("");
-            lore.add(ChatUtils.format("&cstore.galanticnetwork.eu"));
         }
 
         meta.setLore(lore);
@@ -65,13 +60,6 @@ public class ItemBuilder {
         meta.setOwner(skullOwner);
 
         itemStack.setItemMeta(meta);
-        return this;
-    }
-
-    public ItemBuilder setSkullOwnerUrl(String url) {
-        SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
-
-
         return this;
     }
 
@@ -103,7 +91,7 @@ public class ItemBuilder {
         return itemStack;
     }
 
-    public ItemBuilder setLore(boolean b, List<String> itemLore) {
+    public ItemBuilder setLore(List<String> itemLore) {
         ItemMeta meta = itemStack.getItemMeta();
         List<String> lore = new ArrayList();
 

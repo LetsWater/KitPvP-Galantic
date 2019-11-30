@@ -54,13 +54,13 @@ public class StatisticGUI {
                     if (userLevel.getLevel() == nextLevel) {
                         StatsGUI.setItem(7, new ItemBuilder(Material.SIGN, 1)
                                 .setDisplayName("&aLevel Information")
-                                .setLore(false, " &fHuidig level &8» &7" + user.getLevel() + "/100", " &fXP &8» &7" + user.getXp() + "/" + userLevel.getXP()).build());
+                                .setLore(" &fHuidig level &8» &7" + user.getLevel() + "/100", " &fXP &8» &7" + user.getXp() + "/" + userLevel.getXP()).build());
                         break;
                     }
                     if (userLevel.getLevel() == 100){
                         StatsGUI.setItem(7, new ItemBuilder(Material.SIGN, 1)
                                 .setDisplayName("&aLevel Information")
-                                .setLore(false, " &fHuidig level &8» &7" + user.getLevel() + "", " &fXP &8» &cMax Level").build());
+                                .setLore(" &fHuidig level &8» &7" + user.getLevel() + "", " &fXP &8» &cMax Level").build());
                         break;
                     }
                 }
