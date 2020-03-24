@@ -2,6 +2,7 @@ package me.flame.galantic;
 
 import java.util.Arrays;
 
+import me.flame.galantic.commands.*;
 import me.flame.galantic.kits.upgradeKits.listeners.GUIInventoryListener;
 import me.flame.galantic.kits.upgradeKits.managers.UpgradeManager;
 import me.flame.galantic.listeners.PlayerToggleFlightListener;
@@ -16,10 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.zaxxer.hikari.HikariDataSource;
 
 import me.flame.galantic.combatlogger.listeners.CombatLogEvent;
-import me.flame.galantic.commands.CombatLogCommand;
-import me.flame.galantic.commands.SetSpawnCommand;
-import me.flame.galantic.commands.SpawnCommand;
-import me.flame.galantic.commands.StatisticsCommand;
 import me.flame.galantic.commands.gui.listeners.InventoryListener;
 import me.flame.galantic.listeners.JoinEventListener;
 import me.flame.galantic.listeners.MoveEvent;
@@ -97,6 +94,7 @@ public final class Core extends JavaPlugin implements Listener {
         pm.registerEvents(new CombatLogEvent(), this);
         pm.registerEvents(new PlayerToggleFlightListener(), this);
         pm.registerEvents(new GUIInventoryListener(), this);
+        pm.registerEvents(new SpawnCommand(), this);
     }
 
     private void registerCommands() {
@@ -104,6 +102,7 @@ public final class Core extends JavaPlugin implements Listener {
         getCommand("setspawn").setExecutor(new SetSpawnCommand());
         getCommand("spawn").setExecutor(new SpawnCommand());
         getCommand("combatlog").setExecutor(new CombatLogCommand());
+        getCommand("refill").setExecutor(new RefillCommand());
     }
 
     private void connect() {
@@ -124,7 +123,7 @@ public final class Core extends JavaPlugin implements Listener {
     }
 
     private void loadMessages() {
-        for (String key : Arrays.asList("combat_enabled", "combat_no_active", "combat_disabled", "combat_activated", "kit_chosen", "spawn_saved", "wrong_usage_spawn", "spawn_teleport",
+        for (String key : Arrays.asList("combat_enabled", "combat_no_active", "combat_disabled", "combat_activated", "combat_logged", "kit_chosen", "spawn_saved", "wrong_usage_spawn", "spawn_teleport",
                 "spawn_teleport_target", "spawn_teleport_from", "opening_menu", "opening_menu_target", "kit_received",
                 "death_killed_by", "killed_player", "death_void", "level_up", "killstreak", "ended_killstreak", "fly_cannot_enable", "combat_logged_welcome_back", "gui_player_profile_settings_displayname",
                 "gui_player_profile_settings_lore", "gui_settings_title", "gui_arrow_back_lore",
@@ -160,9 +159,12 @@ public final class Core extends JavaPlugin implements Listener {
                 "gui_player_profile_language_lore", "gui_player_profile_language_english_displayname",
                 "gui_player_profile_language_english_lore", "gui_player_profile_language_netherlands_displayname",
                 "gui_player_profile_language_netherlands_lore", "gui_player_profile_title",
-                "gui_serverselector_title", "no_kit_permission", "warrior_kit_lore", "archer_kit_lore", "tank_kit_lore"
-                , "axe_kit_lore", "ninja_kit_lore", "vip_kit_lore", "elite_kit_lore", "hero_kit_lore"
-                , "god_kit_lore", "custom_kit_lore", "warrior_upgrade_lore")) {
+                "gui_serverselector_title", "no_kit_permission", "warrior_kit_lore", "archer_kit_lore", "tank_kit_lore",
+                "axe_kit_lore", "ninja_kit_lore", "vip_kit_lore", "elite_kit_lore", "hero_kit_lore",
+                "god_kit_lore", "custom_kit_lore", "warrior_upgrade_lore", "archer_upgrade_lore", "tank_upgrade_lore",
+                "axe_upgrade_lore", "ninja_upgrade_lore" , "wood_upgrade_lore", "healer_upgrade_lore", "rogue_upgrade_lore",
+                "knight_upgrade_lore", "assassin_upgrade_lore", "go_back_arrow", "kit_upgrade", "refill_not_enough_coins",
+                "spawn_cooldown", "refill_completed", "refill_cooldown", "spawn_teleport_canceld")) {
             CoreAPI.getMessageManager().addMessage(key,
                     LanguageCombiner.builder().addMessage(Language.DUTCH, "Key: " + key)
                             .addMessage(Language.ENGLISH, "Key: " + key).build());

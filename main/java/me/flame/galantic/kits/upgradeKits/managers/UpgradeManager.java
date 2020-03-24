@@ -7,6 +7,7 @@ import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.levelSystem.UserLevel;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
+import me.galantic.galanticcore.api.CoreAPI;
 import me.galantic.galanticcore.api.objects.IUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -55,8 +56,7 @@ public class UpgradeManager implements IUpgrade {
     @Override
     public void upgradeKitLevel(UUID uuid, String kit, Integer level) {
         Player p = Bukkit.getServer().getPlayer(uuid);
-        if(level == 6){
-            p.sendMessage(ChatUtils.format("Maximum level bereikt, upgrade niet mogelijk."));
+        if(level >= 6){
             return;
         }
         for (SQLUser user : SQLUserManager.userList) {
@@ -64,7 +64,7 @@ public class UpgradeManager implements IUpgrade {
                 for (Upgrade upgrade : upgradeList) {
                     if (upgrade.getName().equals(kit)) {
                         if (user.getPvpCoins() >= getLevelUpgradeCost(kit, level)) {
-                            p.sendMessage(ChatUtils.format("Je hebt de kit " + upgrade.getName() + " geupgrade naar level " + level + "!"));
+                            CoreAPI.getMessageManager().sendMessage( p, "kit_upgrade", upgrade.getName(), level);
                             p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1);
                             switch(upgrade.getName()){
                                 case "warrior":
@@ -87,24 +87,24 @@ public class UpgradeManager implements IUpgrade {
                                     user.setNinja_level(level);
                                     user.setPvpCoins(user.getPvpCoins() - getLevelUpgradeCost(kit, level));
                                     break;
-                                case "vip":
-                                    user.setVip_level(level);
+                                case "hood":
+                                    user.setHood_level(level);
                                     user.setPvpCoins(user.getPvpCoins() - getLevelUpgradeCost(kit, level));
                                     break;
-                                case "elite":
-                                    user.setElite_level(level);
+                                case "healer":
+                                    user.setHealer_level(level);
                                     user.setPvpCoins(user.getPvpCoins() - getLevelUpgradeCost(kit, level));
                                     break;
-                                case "hero":
-                                    user.setHero_level(level);
+                                case "rogue":
+                                    user.setRogue_level(level);
                                     user.setPvpCoins(user.getPvpCoins() - getLevelUpgradeCost(kit, level));
                                     break;
-                                case "god":
-                                    user.setGod_level(level);
+                                case "knight":
+                                    user.setKnight_level(level);
                                     user.setPvpCoins(user.getPvpCoins() - getLevelUpgradeCost(kit, level));
                                     break;
-                                case "custom":
-                                    user.setCustom_level(level);
+                                case "assassin":
+                                    user.setAssassin_level(level);
                                     user.setPvpCoins(user.getPvpCoins() - getLevelUpgradeCost(kit, level));
                                     break;
                                 default:

@@ -10,6 +10,7 @@ import me.galantic.galanticcore.api.CoreAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,6 @@ import java.util.UUID;
 public class SQLUserManager implements ISQLUser {
 
     private static SQLUserManager instance = new SQLUserManager();
-
     public static ArrayList<SQLUser> userList = new ArrayList<>();
 
     @Override
@@ -66,16 +66,16 @@ public class SQLUserManager implements ISQLUser {
                 Integer xp = resultLevels.getInt("xp");
 
                 Integer warrior_level = resultData.getInt("warrior_level");
-                Integer archer_level = resultData.getInt("warrior_level");
-                Integer tank_level = resultData.getInt("warrior_level");
-                Integer axe_level = resultData.getInt("warrior_level");
-                Integer ninja_level = resultData.getInt("warrior_level");
+                Integer archer_level = resultData.getInt("archer_level");
+                Integer tank_level = resultData.getInt("tank_level");
+                Integer axe_level = resultData.getInt("axe_level");
+                Integer ninja_level = resultData.getInt("ninja_level");
 
-                Integer vip_level = resultData.getInt("warrior_level");
-                Integer elite_level = resultData.getInt("warrior_level");
-                Integer hero_level = resultData.getInt("warrior_level");
-                Integer god_level = resultData.getInt("warrior_level");
-                Integer custom_level = resultData.getInt("warrior_level");
+                Integer vip_level = resultData.getInt("vip_level");
+                Integer elite_level = resultData.getInt("elite_level");
+                Integer hero_level = resultData.getInt("hero_level");
+                Integer god_level = resultData.getInt("god_level");
+                Integer custom_level = resultData.getInt("custom_level");
 
                 user = new SQLUser(name, uuid, using_kit, pvpCoins, kills, deaths, bestStreak, level, xp, warrior_level, archer_level, tank_level, axe_level, ninja_level, vip_level, elite_level, hero_level, god_level, custom_level);
                 userList.add(user);
@@ -115,11 +115,11 @@ public class SQLUserManager implements ISQLUser {
                     userData.executeUpdate("UPDATE `user_data` set `axe_level` = '" + user.getAxe_level() + "' WHERE uuid = '" + uuid + "';");
                     userData.executeUpdate("UPDATE `user_data` set `ninja_level` = '" + user.getNinja_level() + "' WHERE uuid = '" + uuid + "';");
 
-                    userData.executeUpdate("UPDATE `user_data` set `vip_level` = '" + user.getVip_level() + "' WHERE uuid = '" + uuid + "';");
-                    userData.executeUpdate("UPDATE `user_data` set `elite_level` = '" + user.getElite_level() + "' WHERE uuid = '" + uuid + "';");
-                    userData.executeUpdate("UPDATE `user_data` set `hero_level` = '" + user.getHero_level() + "' WHERE uuid = '" + uuid + "';");
-                    userData.executeUpdate("UPDATE `user_data` set `god_level` = '" + user.getGod_level() + "' WHERE uuid = '" + uuid + "';");
-                    userData.executeUpdate("UPDATE `user_data` set `custom_level` = '" + user.getCustom_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `vip_level` = '" + user.getHood_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `elite_level` = '" + user.getHealer_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `hero_level` = '" + user.getRogue_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `god_level` = '" + user.getKnight_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `custom_level` = '" + user.getAssassin_level() + "' WHERE uuid = '" + uuid + "';");
 
                     userLevels.executeUpdate("UPDATE `user_levels` set `level` = '" + user.getLevel() + "' WHERE uuid = '" + uuid + "';");
                     userLevels.executeUpdate("UPDATE `user_levels` set `xp` = '" + user.getXp() + "' WHERE uuid = '" + uuid + "';");
@@ -155,6 +155,7 @@ public class SQLUserManager implements ISQLUser {
             if (user.getUuid() == uuid) {
                 user.setDeaths(user.getDeaths() + 1);
                 UUID killerUUID = PvPEventListener.inFight.get(uuid);
+                Player p = Bukkit.getPlayer(user.getUuid());
 
                 broadcastEndedKillstreak(uuid, killerUUID, PvPEventListener.killstreak.get(uuid));
                 PvPEventListener.killstreak.replace(uuid, 0);
@@ -164,6 +165,15 @@ public class SQLUserManager implements ISQLUser {
                     break;
                 }
                 user.setPvpCoins(user.getPvpCoins() - FileManager.get("config.yml").getDouble("PvP-Settings.coins-per-death"));
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if(p.isDead()){
+                            p.spigot().respawn();
+                        }
+                    }
+                }, 10);
 
                 UserLevelManager.getInstance().setXPLevel(user.getUuid());
                 break;

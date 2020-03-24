@@ -69,4 +69,11 @@ public class CombatLoggerManager implements ICombatLoggerManager {
     public boolean hasActiveCombat(Player p) {
         return cooldownTask.containsKey(p.getUniqueId());
     }
+
+    public Integer getCombatTime(Player p){
+        if(hasActiveCombat(p)){
+            return cooldownSeconds.get(p.getUniqueId());
+        }
+        return 0;
+    }
 }

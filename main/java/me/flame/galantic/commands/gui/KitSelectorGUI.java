@@ -42,24 +42,24 @@ public class KitSelectorGUI {
                 .setLore(CoreAPI.getMessageManager().getMessage( user.getLanguage(),
                         "ninja_kit_lore")).setItemFlag(ItemFlag.HIDE_POTION_EFFECTS).build());
 
-        selector.setItem(29, new ItemBuilder(Material.BOW, 1).setDisplayName("&b&lVIP")
+        selector.setItem(29, new ItemBuilder(Material.BOW, 1).setDisplayName("&b&lHood")
                 .setLore(CoreAPI.getMessageManager().getMessage( user.getLanguage(),
                         "vip_kit_lore")).setEnchanted().setItemFlag(ItemFlag.HIDE_ENCHANTS).build());
 
 
-        selector.setItem(30, new ItemBuilder(Material.FISHING_ROD, 1).setDisplayName("&b&lElite")
+        selector.setItem(30, new ItemBuilder(Material.FISHING_ROD, 1).setDisplayName("&b&lHealer")
                 .setLore(CoreAPI.getMessageManager().getMessage( user.getLanguage(),
                         "elite_kit_lore")).setEnchanted().setItemFlag(ItemFlag.HIDE_ENCHANTS).build());
 
-        selector.setItem(31, new ItemBuilder(Material.POTION, 1, (byte) 8259).setDisplayName("&b&lHero")
+        selector.setItem(31, new ItemBuilder(Material.POTION, 1, (byte) 8259).setDisplayName("&b&lRogue")
                 .setLore(CoreAPI.getMessageManager().getMessage( user.getLanguage(),
                         "hero_kit_lore")).setEnchanted().setItemFlag(ItemFlag.HIDE_ENCHANTS).setItemFlag(ItemFlag.HIDE_POTION_EFFECTS).build());
 
-        selector.setItem(32, new ItemBuilder(Material.DIAMOND_SWORD, 1).setDisplayName("&b&lGod")
+        selector.setItem(32, new ItemBuilder(Material.DIAMOND_SWORD, 1).setDisplayName("&b&lKnight")
                 .setLore(CoreAPI.getMessageManager().getMessage( user.getLanguage(),
                         "god_kit_lore")).setEnchanted().setItemFlag(ItemFlag.HIDE_ENCHANTS).build());
 
-        selector.setItem(33, new ItemBuilder(Material.SLIME_BALL, 1).setDisplayName("&b&lCustom")
+        selector.setItem(33, new ItemBuilder(Material.SLIME_BALL, 1).setDisplayName("&b&lAssassin")
                 .setLore(CoreAPI.getMessageManager().getMessage( user.getLanguage(),
                         "custom_kit_lore")).setEnchanted().setItemFlag(ItemFlag.HIDE_ENCHANTS).build());
 

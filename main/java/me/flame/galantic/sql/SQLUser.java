@@ -18,14 +18,14 @@ public class SQLUser {
     private Integer tank_level;
     private Integer axe_level;
     private Integer ninja_level;
-    private Integer vip_level;
-    private Integer elite_level;
-    private Integer hero_level;
-    private Integer god_level;
-    private Integer custom_level;
+    private Integer hood_level;
+    private Integer healer_level;
+    private Integer rogue_level;
+    private Integer knight_level;
+    private Integer assassin_level;
 
 
-    public SQLUser(String name, UUID uuid, String using_kit, double pvpCoins, Integer kills, Integer deaths, Integer bestStreak, Integer level, double xp, Integer warrior_level, Integer archer_level, Integer tank_level, Integer axe_level, Integer ninja_level, Integer vip_level, Integer elite_level, Integer hero_level, Integer god_level, Integer custom_level) {
+    public SQLUser(String name, UUID uuid, String using_kit, double pvpCoins, Integer kills, Integer deaths, Integer bestStreak, Integer level, double xp, Integer warrior_level, Integer archer_level, Integer tank_level, Integer axe_level, Integer ninja_level, Integer hood_level, Integer healer_level, Integer rogue_level, Integer knight_level, Integer assassin_level) {
         this.name = name;
         this.uuid = uuid;
         this.using_kit = using_kit;
@@ -42,11 +42,11 @@ public class SQLUser {
         this.axe_level = axe_level;
         this.ninja_level = ninja_level;
 
-        this.vip_level = vip_level;
-        this.elite_level = elite_level;
-        this.hero_level = hero_level;
-        this.god_level = god_level;
-        this.custom_level = custom_level;
+        this.hood_level = hood_level;
+        this.healer_level = healer_level;
+        this.rogue_level = rogue_level;
+        this.knight_level = knight_level;
+        this.assassin_level = assassin_level;
     }
 
     public double getPvpCoins() {
@@ -154,43 +154,43 @@ public class SQLUser {
         this.ninja_level = ninja_level;
     }
 
-    public Integer getVip_level() {
-        return vip_level;
+    public Integer getHood_level() {
+        return hood_level;
     }
 
-    public void setVip_level(Integer vip_level) {
-        this.vip_level = vip_level;
+    public void setHood_level(Integer hood_level) {
+        this.hood_level = hood_level;
     }
 
-    public Integer getElite_level() {
-        return elite_level;
+    public Integer getHealer_level() {
+        return healer_level;
     }
 
-    public void setElite_level(Integer elite_level) {
-        this.elite_level = elite_level;
+    public void setHealer_level(Integer healer_level) {
+        this.healer_level = healer_level;
     }
 
-    public Integer getHero_level() {
-        return hero_level;
+    public Integer getRogue_level() {
+        return rogue_level;
     }
 
-    public void setHero_level(Integer hero_level) {
-        this.hero_level = hero_level;
+    public void setRogue_level(Integer rogue_level) {
+        this.rogue_level = rogue_level;
     }
 
-    public Integer getGod_level() {
-        return god_level;
+    public Integer getKnight_level() {
+        return knight_level;
     }
 
-    public void setGod_level(Integer god_level) {
-        this.god_level = god_level;
+    public void setKnight_level(Integer knight_level) {
+        this.knight_level = knight_level;
     }
 
-    public Integer getCustom_level() {
-        return custom_level;
+    public Integer getAssassin_level() {
+        return assassin_level;
     }
 
-    public void setCustom_level(Integer custom_level) {
-        this.custom_level = custom_level;
+    public void setAssassin_level(Integer assassin_level) {
+        this.assassin_level = assassin_level;
     }
 }

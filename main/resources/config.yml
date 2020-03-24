@@ -17,3 +17,4 @@ PvP-Settings:
   coins-per-kill: 1 # The amount of coins a player gets on a kill.
   coins-per-death: 0 # The amount of coins a player loses on a death.
   coins-per-combatlog: 5 # The amount of coins a player loses on a combatlog.
+  coins-for-refill: 10 # The amount of coins needed for a refill!

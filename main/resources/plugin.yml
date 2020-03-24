@@ -16,3 +16,6 @@ commands:
   combatlog:
     description: []
     aliases: [ct, combatl, cl, combat, clog]
+  refill:
+    description: []
+    aliases: [soup]

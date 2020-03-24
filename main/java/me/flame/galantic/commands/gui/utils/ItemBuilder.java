@@ -1,12 +1,16 @@
 package me.flame.galantic.commands.gui.utils;
 
 import me.flame.galantic.utils.ChatUtils;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.Potion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,18 +50,35 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setItemFlag(ItemFlag itemFlag) {
+    public ItemBuilder setItemFlag(ItemFlag... itemFlag) {
         ItemMeta meta = itemStack.getItemMeta();
 
-        meta.addItemFlags(itemFlag);
+        for(ItemFlag itemFlag1 : itemFlag){
+            meta.addItemFlags(itemFlag1);
+        }
 
         itemStack.setItemMeta(meta);
         return this;
     }
 
+    public ItemBuilder setSplash(){
+        Potion pot = new Potion(1);
+        pot.setSplash(true);
+        pot.apply(itemStack);
+        return this;
+    }
     public ItemBuilder setSkullOwner(String skullOwner) {
         SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
         meta.setOwner(skullOwner);
+
+        itemStack.setItemMeta(meta);
+        return this;
+    }
+
+    public ItemBuilder setColor(Color color){
+        LeatherArmorMeta meta = (LeatherArmorMeta) itemStack.getItemMeta();
+
+        meta.setColor(color);
 
         itemStack.setItemMeta(meta);
         return this;

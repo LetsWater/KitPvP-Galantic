@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -54,8 +55,6 @@ public class PvPEventListener implements Listener {
                 SQLUserManager.getInstance().removeRewards(e.getEntity().getUniqueId());
 
                 combatLoggerManager.removeCombat(e.getEntity());
-
-                e.getEntity().spigot().respawn();
                 return;
             } else {
                 CoreAPI.getMessageManager().sendMessage(e.getEntity(), "death_void");
@@ -72,8 +71,6 @@ public class PvPEventListener implements Listener {
 
                     // Rewards
                     SQLUserManager.getInstance().removeRewards(p.getUniqueId());
-
-                    p.spigot().respawn();
                     break;
                 }
             }
@@ -86,8 +83,6 @@ public class PvPEventListener implements Listener {
 
                     // Rewards
                     SQLUserManager.getInstance().addRewards(killer.getUniqueId());
-
-                    // Remove from fight
                     break;
                 }
             }
@@ -97,6 +92,7 @@ public class PvPEventListener implements Listener {
     @EventHandler
     public void respawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
+        p.setVelocity(new Vector(0, 0, 0));
         p.setGameMode(GameMode.ADVENTURE);
 
         String locatie = FileManager.get("config.yml").getString("spawn.locatie");
@@ -192,15 +188,17 @@ public class PvPEventListener implements Listener {
             return;
         if (p.getHealth() == p.getMaxHealth())
             return;
+
         if (p.getItemInHand().getType() == Material.MUSHROOM_SOUP) {
             if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 p.setHealth(p.getHealth() + 8 > p.getMaxHealth() ? p.getMaxHealth() : p.getHealth() + 8);
-
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Core.getInstance(), new BukkitRunnable() {
                     @Override
                     public void run() {
-                        p.setItemInHand(new ItemStack(Material.AIR));
-                        p.updateInventory();
+                        if (p.getItemInHand().getType() == Material.MUSHROOM_SOUP) {
+                            p.setItemInHand(new ItemStack(Material.AIR));
+                            p.updateInventory();
+                        }
                     }
                 }, 0);
             }
