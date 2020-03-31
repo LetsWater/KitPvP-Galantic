@@ -1,6 +1,8 @@
 package me.flame.galantic.sql.managers;
 
 import me.flame.galantic.Core;
+import me.flame.galantic.adminpanel.AdminPanel;
+import me.flame.galantic.adminpanel.managers.AdminPanelManager;
 import me.flame.galantic.listeners.PvPEventListener;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.interfaces.ISQLUser;
@@ -32,7 +34,7 @@ public class SQLUserManager implements ISQLUser {
             ResultSet result = insert.executeQuery();
 
             if (!result.next()) {
-                insert.executeUpdate("INSERT INTO `user_data` (`uuid`, `name`, `using_kit`, `pvp_coins`, `kills`, `deaths`, `best_streak`, `warrior_level`, `archer_level`, `tank_level`, `axe_level`, `ninja_level`, `vip_level`, `elite_level`, `hero_level`, `god_level`, `custom_level`)  VALUE ('" + uuid + "', '" + p.getName() + "', 'warrior' , '0', '0', '0', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1');");
+                insert.executeUpdate("INSERT INTO `user_data` (`uuid`, `name`, `using_kit`, `pvp_coins`, `kills`, `deaths`, `best_streak`, `warrior_level`, `archer_level`, `tank_level`, `axe_level`, `ninja_level`, `hood_level`, `healer_level`, `rogue_level`, `knight_level`, `assassin_level`)  VALUE ('" + uuid + "', '" + p.getName() + "', 'warrior' , '0', '0', '0', '0', '1', '1', '1', '1', '1', '0', '0', '0', '0', '0');");
                 insert.executeUpdate("INSERT INTO `user_levels` (`uuid`, `name`, `level`, `xp`) VALUE ('" + uuid + "', '" + p.getName() + "', '1', '0');");
             }
         } catch (SQLException e) {
@@ -71,13 +73,13 @@ public class SQLUserManager implements ISQLUser {
                 Integer axe_level = resultData.getInt("axe_level");
                 Integer ninja_level = resultData.getInt("ninja_level");
 
-                Integer vip_level = resultData.getInt("vip_level");
-                Integer elite_level = resultData.getInt("elite_level");
-                Integer hero_level = resultData.getInt("hero_level");
-                Integer god_level = resultData.getInt("god_level");
-                Integer custom_level = resultData.getInt("custom_level");
+                Integer hood_level = resultData.getInt("hood_level");
+                Integer healer_level = resultData.getInt("healer_level");
+                Integer rogue_level = resultData.getInt("rogue_level");
+                Integer knight_level = resultData.getInt("knight_level");
+                Integer assassin_level = resultData.getInt("assassin_level");
 
-                user = new SQLUser(name, uuid, using_kit, pvpCoins, kills, deaths, bestStreak, level, xp, warrior_level, archer_level, tank_level, axe_level, ninja_level, vip_level, elite_level, hero_level, god_level, custom_level);
+                user = new SQLUser(name, uuid, using_kit, pvpCoins, kills, deaths, bestStreak, level, xp, warrior_level, archer_level, tank_level, axe_level, ninja_level, hood_level, healer_level, rogue_level, knight_level, assassin_level);
                 userList.add(user);
 
                 PvPEventListener.killstreak.put(uuid, 0);
@@ -115,11 +117,11 @@ public class SQLUserManager implements ISQLUser {
                     userData.executeUpdate("UPDATE `user_data` set `axe_level` = '" + user.getAxe_level() + "' WHERE uuid = '" + uuid + "';");
                     userData.executeUpdate("UPDATE `user_data` set `ninja_level` = '" + user.getNinja_level() + "' WHERE uuid = '" + uuid + "';");
 
-                    userData.executeUpdate("UPDATE `user_data` set `vip_level` = '" + user.getHood_level() + "' WHERE uuid = '" + uuid + "';");
-                    userData.executeUpdate("UPDATE `user_data` set `elite_level` = '" + user.getHealer_level() + "' WHERE uuid = '" + uuid + "';");
-                    userData.executeUpdate("UPDATE `user_data` set `hero_level` = '" + user.getRogue_level() + "' WHERE uuid = '" + uuid + "';");
-                    userData.executeUpdate("UPDATE `user_data` set `god_level` = '" + user.getKnight_level() + "' WHERE uuid = '" + uuid + "';");
-                    userData.executeUpdate("UPDATE `user_data` set `custom_level` = '" + user.getAssassin_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `hood_level` = '" + user.getHood_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `healer_level` = '" + user.getHealer_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `rogue_level` = '" + user.getRogue_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `knight_level` = '" + user.getKnight_level() + "' WHERE uuid = '" + uuid + "';");
+                    userData.executeUpdate("UPDATE `user_data` set `assassin_level` = '" + user.getAssassin_level() + "' WHERE uuid = '" + uuid + "';");
 
                     userLevels.executeUpdate("UPDATE `user_levels` set `level` = '" + user.getLevel() + "' WHERE uuid = '" + uuid + "';");
                     userLevels.executeUpdate("UPDATE `user_levels` set `xp` = '" + user.getXp() + "' WHERE uuid = '" + uuid + "';");
@@ -137,8 +139,8 @@ public class SQLUserManager implements ISQLUser {
         for (SQLUser user : SQLUserManager.userList) {
             if (user.getUuid() == uuid) {
                 user.setKills(user.getKills() + 1);
-                user.setPvpCoins(user.getPvpCoins() + FileManager.get("config.yml").getDouble("PvP-Settings.coins-per-kill"));
-                user.setXp(user.getXp() + FileManager.get("config.yml").getDouble("PvP-Settings.xp-per-kill"));
+                user.setPvpCoins(user.getPvpCoins() + FileManager.get("config.yml").getDouble("PvP-Settings.coins-per-kill") * AdminPanelManager.getInstance().getBooster());
+                user.setXp(user.getXp() + FileManager.get("config.yml").getDouble("PvP-Settings.xp-per-kill") * AdminPanelManager.getInstance().getXpBooster());
                 UserLevelManager.getInstance().levelUp(user.getUuid());
 
                 PvPEventListener.killstreak.replace(uuid, PvPEventListener.killstreak.get(uuid) + 1);

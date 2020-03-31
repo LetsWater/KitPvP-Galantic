@@ -2,12 +2,14 @@ package me.flame.galantic;
 
 import java.util.Arrays;
 
+import me.flame.galantic.adminpanel.commands.AdminPanelCommand;
+import me.flame.galantic.adminpanel.commands.gui.listeners.InventoryListenerAdmin;
+import me.flame.galantic.adminpanel.managers.AdminPanelManager;
 import me.flame.galantic.commands.*;
 import me.flame.galantic.kits.upgradeKits.listeners.GUIInventoryListener;
 import me.flame.galantic.kits.upgradeKits.managers.UpgradeManager;
 import me.flame.galantic.listeners.PlayerToggleFlightListener;
 import me.flame.galantic.utils.GUI;
-import me.galantic.galanticcore.api.BungeecordAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -40,6 +42,7 @@ public final class Core extends JavaPlugin implements Listener {
     private final SQLUserManager sqlUserManager = new SQLUserManager();
     private final ScoreboardUtils scoreboardUtils = new ScoreboardUtils();
     private final UpgradeManager upgradeManager = new UpgradeManager();
+    private final AdminPanelManager adminPanelManager = new AdminPanelManager();
 
     public static Core getInstance() {
         return instance;
@@ -61,6 +64,7 @@ public final class Core extends JavaPlugin implements Listener {
         connect();
         sqlManager.createTables();
         userLevelManager.loadLevels();
+        adminPanelManager.loadAdminPanel();
 
         for (Player online : Bukkit.getServer().getOnlinePlayers()) {
             sqlUserManager.loadUser(online.getUniqueId());
@@ -95,6 +99,7 @@ public final class Core extends JavaPlugin implements Listener {
         pm.registerEvents(new PlayerToggleFlightListener(), this);
         pm.registerEvents(new GUIInventoryListener(), this);
         pm.registerEvents(new SpawnCommand(), this);
+        pm.registerEvents(new InventoryListenerAdmin(), this);
     }
 
     private void registerCommands() {
@@ -103,6 +108,7 @@ public final class Core extends JavaPlugin implements Listener {
         getCommand("spawn").setExecutor(new SpawnCommand());
         getCommand("combatlog").setExecutor(new CombatLogCommand());
         getCommand("refill").setExecutor(new RefillCommand());
+        getCommand("admin").setExecutor(new AdminPanelCommand());
     }
 
     private void connect() {
@@ -162,9 +168,11 @@ public final class Core extends JavaPlugin implements Listener {
                 "gui_serverselector_title", "no_kit_permission", "warrior_kit_lore", "archer_kit_lore", "tank_kit_lore",
                 "axe_kit_lore", "ninja_kit_lore", "vip_kit_lore", "elite_kit_lore", "hero_kit_lore",
                 "god_kit_lore", "custom_kit_lore", "warrior_upgrade_lore", "archer_upgrade_lore", "tank_upgrade_lore",
-                "axe_upgrade_lore", "ninja_upgrade_lore" , "wood_upgrade_lore", "healer_upgrade_lore", "rogue_upgrade_lore",
-                "knight_upgrade_lore", "assassin_upgrade_lore", "go_back_arrow", "kit_upgrade", "refill_not_enough_coins",
-                "spawn_cooldown", "refill_completed", "refill_cooldown", "spawn_teleport_canceld")) {
+                "axe_upgrade_lore", "ninja_upgrade_lore" , "hood_upgrade_lore", "healer_upgrade_lore", "rogue_upgrade_lore",
+                "knight_upgrade_lore", "assassin_upgrade_lore", "go_back_arrow_name", "go_back_arrow_lore", "kit_upgrade", "refill_not_enough_coins",
+                "spawn_cooldown", "refill_completed", "refill_cooldown", "spawn_teleport_canceld", "hood_unlock_lore", "healer_unlock_lore",
+                "knight_unlock_lore", "rogue_unlock_lore", "assassin_unlock_lore", "kit_already_unlocked", "kit_bought", "can_not_upgrade_kit",
+                "can_upgrade_kit", "kit_not_unlocked", "kit_max_level")) {
             CoreAPI.getMessageManager().addMessage(key,
                     LanguageCombiner.builder().addMessage(Language.DUTCH, "Key: " + key)
                             .addMessage(Language.ENGLISH, "Key: " + key).build());

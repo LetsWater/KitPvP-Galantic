@@ -1,6 +1,8 @@
 package me.flame.galantic.commands.gui.listeners;
 
+import me.flame.galantic.adminpanel.managers.AdminPanelManager;
 import me.flame.galantic.commands.gui.KitSelectorGUI;
+import me.flame.galantic.commands.gui.utils.CheckPermissions;
 import me.flame.galantic.sql.SQLUser;
 import me.flame.galantic.sql.managers.SQLUserManager;
 import me.flame.galantic.utils.ChatUtils;
@@ -8,6 +10,7 @@ import me.flame.galantic.utils.GUI;
 import me.galantic.galanticcore.api.CoreAPI;
 
 import me.galanticmc.hub.HubInventory;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -36,14 +39,25 @@ public class InventoryListener implements Listener {
         Player p = (Player) e.getWhoClicked();
         if (e.getClickedInventory().getName().contains(ChatUtils.format("&a&lStats &8»"))) {
             e.setCancelled(true);
+            return;
         }
 
         if (e.getClickedInventory().getName().contains(ChatUtils.format("&9Kit Selector"))) {
-            e.setCancelled(true);
-            if (e.getCurrentItem().getType() != Material.AIR) {
-                String kitName = e.getCurrentItem().getItemMeta().getDisplayName().replace("§b", "").replaceAll("§l", "").toLowerCase();
+            String kitName = e.getCurrentItem().getItemMeta().getDisplayName().replace("§b", "").replaceAll("§l", "").toLowerCase();
+            if (AdminPanelManager.getInstance().getPermissions() == false) {
                 for (SQLUser user : SQLUserManager.userList) {
-                    if (p.hasPermission("kitpvp.kit." + kitName) || kitName.equals("warrior") || kitName.equals("archer") || kitName.equals("tank") || kitName.equals("axe") || kitName.equals("ninja")) {
+                    if (user.getUuid() == p.getUniqueId()) {
+                        user.setUsing_kit(kitName);
+
+                        CoreAPI.getMessageManager().sendMessage(p, "kit_chosen", kitName);
+                        p.closeInventory();
+                        break;
+                    }
+                    break;
+                }
+            } else {
+                for(SQLUser user : SQLUserManager.userList){
+                    if (CheckPermissions.CheckPermissions(p.getUniqueId(), kitName)) {
                         if (user.getUuid() == p.getUniqueId()) {
                             user.setUsing_kit(kitName);
 
@@ -52,23 +66,29 @@ public class InventoryListener implements Listener {
                             break;
                         }
                     } else {
-                        CoreAPI.getMessageManager().sendMessage(p, "no_kit_permission", kitName);
+                        CoreAPI.getMessageManager().sendMessage(p, "kit_not_unlocked", kitName);
                         p.closeInventory();
                         break;
                     }
                 }
             }
+            e.setCancelled(true);
+            return;
         }
 
         if (e.getClickedInventory().getType() == InventoryType.PLAYER && p.getInventory().getHelmet() == null) {
             if (p.getGameMode() == GameMode.ADVENTURE) {
                 e.setCancelled(true);
             }
+            return;
         }
 
-        if(p.getGameMode() == GameMode.ADVENTURE && p.getInventory().getHelmet() == null){
+        if (p.getGameMode() == GameMode.ADVENTURE && p.getInventory().
+
+                getHelmet() == null) {
             e.setCancelled(true);
         }
+
     }
 
     @EventHandler
@@ -82,15 +102,15 @@ public class InventoryListener implements Listener {
                     kitSelectorGUI.kitSelector(p.getUniqueId());
                 }
 
-                if(e.getItem().getType() == Material.COMPASS){
+                if (e.getItem().getType() == Material.COMPASS) {
                     GUI.SERVER_SELECTOR.openInventory(p);
                 }
 
-                if(e.getItem().getType() == Material.SKULL_ITEM){
+                if (e.getItem().getType() == Material.SKULL_ITEM) {
                     GUI.PLAYER_PROFILE.openInventory(p);
                 }
 
-                if(e.getItem().getType() == Material.CHEST){
+                if (e.getItem().getType() == Material.CHEST) {
                     p.sendMessage(ChatUtils.format("&cComing soon"));
                 }
             }

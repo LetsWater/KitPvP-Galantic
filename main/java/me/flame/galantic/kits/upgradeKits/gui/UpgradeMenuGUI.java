@@ -26,9 +26,7 @@ public class UpgradeMenuGUI {
                 inventory.setItem(11, new ItemBuilder(Material.IRON_SWORD, 1).setDisplayName("&aKit Upgrades").setLore("lore").build());
                 inventory.setItem(13, new ItemBuilder(Material.GOLD_NUGGET, 1).setDisplayName("&7Coins: &a" + user.getPvpCoins()).setLore("lore").build());
                 inventory.setItem(15, new ItemBuilder(Material.ANVIL, 1).setDisplayName("&aKit Shop")
-                        .setLore("lore")
-                        .setEnchanted()
-                        .setItemFlag(ItemFlag.HIDE_ENCHANTS).build());
+                        .setLore("lore").build());
 
                 break;
             }
